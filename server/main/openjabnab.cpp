@@ -42,14 +42,18 @@ OpenJabNab::OpenJabNab(int argc, char ** argv):QCoreApplication(argc, argv)
 
 	if(GlobalSettings::Get("Config/XmppListener", true) == true)
 	{
+		PluginInterface * p= PluginManager::Instance().GetPluginByName("xmppport");
+		int port = p->GetEnable() ? p->GetSettings("global/XmppPort", 5222).toInt() : 5222;
+		LogInfo(QString("XMPP Port is: %1").arg(port));
 		xmppListener = new QTcpServer(this);
-		xmppListener->listen(QHostAddress::Any, GlobalSettings::GetInt("OpenJabNabServers/XmppPort", 5222));
+		xmppListener->listen(QHostAddress::Any, port);
 		connect(xmppListener, SIGNAL(newConnection()), this, SLOT(NewXMPPConnection()));
 	}
 	else
 		LogWarning("Warning : XMPP Listener is disabled !");
 
 	httpApi = GlobalSettings::Get("Config/HttpApi", true).toBool();
+	httpVioletApi = GlobalSettings::Get("Config/HttpVioletApi", true).toBool();
 	httpViolet = GlobalSettings::Get("Config/HttpViolet", true).toBool();
 	standAlone = GlobalSettings::Get("Config/StandAlone", true).toBool();
 	LogInfo(QString("Parsing of HTTP Api is ").append((httpApi == true)?"enabled":"disabled"));
@@ -64,20 +68,21 @@ void OpenJabNab::Close()
 
 OpenJabNab::~OpenJabNab()
 {
-	LogInfo("-- OpenJabNab Close --");
 	xmppListener->close();
 	httpListener->close();
 	NetworkDump::Close();
-	AccountManager::Close();
-	PluginManager::Close();
 	ZtampManager::Close();
 	BunnyManager::Close();
+	TTSManager::Close();
+	PluginManager::Close();
+	AccountManager::Close();
 	GlobalSettings::Close();
+	LogInfo("-- OpenJabNab Close --");
 }
 
 void OpenJabNab::NewHTTPConnection()
 {
-	HttpHandler * h = new HttpHandler(httpListener->nextPendingConnection(), httpApi, httpViolet, standAlone);
+	HttpHandler * h = new HttpHandler(httpListener->nextPendingConnection(), httpApi, httpVioletApi, httpViolet, standAlone);
 	connect(this, SIGNAL(Quit()), h, SLOT(Disconnect()));
 }
 

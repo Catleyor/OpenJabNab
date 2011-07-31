@@ -1,10 +1,10 @@
 <?php
 require_once "include/common.php";
-if(!isset($_SESSION['connected']))
+if(!isset($_SESSION['token']) || !$Infos['isAdmin'])
 	header('Location: index.php');
 
 $Plugins = $ojnAPI->getListOfPlugins(false);
-	
+
 if((!empty($_GET['plug']) && !empty($_GET['stat'])) || (!empty($_POST['plug']) && !empty($_POST['stat']))) {
 	$a = !empty($_GET['stat']) ? $_GET : $_POST;
 	if($a['stat'] == 'activate')
@@ -16,9 +16,9 @@ if((!empty($_GET['plug']) && !empty($_GET['stat'])) || (!empty($_POST['plug']) &
 	if(isset($a['plug'],$Plugins))
 		$_SESSION['message'] = $ojnAPI->getApiString('plugins/'.$function.'Plugin?name='.$a['plug'].'&'.$ojnAPI->getToken());
 	else
-		$_SESSION['message']['error'] = "No plugin with such name."; 
+		$_SESSION['message']['error'] = "No plugin with such name.";
 	header('Location: server.php');
-} 
+}
 
 ?>
 <h1 id="config">Configuration du serveur</h1>
@@ -37,54 +37,77 @@ if(isset($_SESSION['message']) && empty($_GET)) {
 	if(empty($_GET))
 		unset($_SESSION['message']);
 	echo "</div>";
-} 
+}
 ?>
 <?php
 		$Plugins = $ojnAPI->getListOfPlugins(false);
 		$BPlugins = $ojnAPI->getListOfBunnyPlugins(false);
-		$APlugins = $ojnAPI->getListOfActivePlugins(false);
-		$SPlugins = array();
-		foreach($Plugins as $p=>$d) {
-			if(!in_array($p,$BPlugins))
-				$SPlugins[] = $p;
-			$Plugins[$p] = array($d,in_array($p,$APlugins) ? true: false);	
-		}
+		$ZPlugins = $ojnAPI->getListOfZtampPlugins(false);
+		$UPlugins = $BPlugins;
+		/* Merge Bunny Plugins and ZTamp Plugins */
+		if(!empty($ZPlugins))
+			foreach($ZPlugins as $v)
+				if(!in_array($v,$BPlugins))
+					$BPlugins[] = $v;
+		$APlugins = $ojnAPI->getListOfEnabledPlugins(false);
+		$SPlugins = $ojnAPI->getApiList("plugins/getListOfSystemPlugins?".$ojnAPI->getToken());
+		$RPlugins = $ojnAPI->getApiList("plugins/getListOfRequiredPlugins?".$ojnAPI->getToken());
 ?>
 <center>
 <table style="width: 80%">
 	<tr>
-		<th>Server Plugins</th>
+		<th>Required Plugins</th>
 		<th colspan="2">Actions</th>
 	</tr>
 <?php
 	$i = 0;
-	foreach($SPlugins as $p){
+	foreach($RPlugins as $p){
 ?>
 	<tr<?php echo $i++ % 2 ? " class='l2'" : "" ?>>
-		<td><?php echo $Plugins[$p][0]; ?></td>
-		<td width="20%"><a href="server_plugin.php?p=<?php echo $p; ?>">Configurer</a></td>
-		<td width="20%"><?php if($Plugins[$p][1]): ?><a href="?stat=reload&plug=<?php echo $p ?>">Recharger</a><?php endif; ?></td>
+		<td><?php echo $Plugins[$p]; ?></td>
+		<td width="21%"><a href="server_plugin.php?p=<?php echo $p; ?>">Configurer</a></td>
+		<td width="21%"><?php if($Plugins[$p][1]): ?><a href="?stat=reload&plug=<?php echo $p ?>">Recharger</a><?php endif; ?></td>
 	</tr>
 <?php } ?>
 </table>
 
 <table style="width: 80%">
 	<tr>
-		<th>Bunnies Plugins</th>
+		<th>System Plugins</th>
+		<th colspan="3">Actions</th>
+	</tr>
+<?php
+	$i = 0;
+	foreach($SPlugins as $p){
+?>
+	<tr<?php echo $i++ % 2 ? " class='l2'" : "" ?>>
+		<td><?php echo $Plugins[$p]; ?></td>
+		<td width="14%"><a href="server_plugin.php?p=<?php echo $p; ?>">Configurer</a></td>
+		<td <?php echo in_array($p,$APlugins) ? 'width="14%"' : 'colspan="2"'; ?>><a href="?stat=<?php echo in_array($p,$APlugins) ? "deactivate" : "activate"; ?>&plug=<?php echo $p ?>"><?php echo in_array($p,$APlugins) ? "D&eacute;sa" : "A"; ?>ctiver le plugin</a>
+		<?php if(in_array($p,$APlugins)): ?><td width="14%"><a href="?stat=reload&plug=<?php echo $p ?>">Recharger</a></td><?php endif; ?>
+	</tr>
+<?php } ?>
+</table>
+
+<table style="width: 80%">
+	<tr>
+		<th>Bunnies &amp; Ztamps Plugins</th>
 		<th colspan="2">Actions</th>
 	</tr>
 <?php
 	$i = 0;
-	foreach($BPlugins as $p){
+    if(!empty($UPlugins))
+	foreach($UPlugins as $p){
 ?>
 	<tr<?php echo $i++ % 2 ? " class='l2'" : "" ?>>
-		<td><?php echo $Plugins[$p][0]; ?></td>
-		<td <?php echo $Plugins[$p][1] ? 'width="20%"' : 'colspan="2"'; ?> ><a href="?stat=<?php echo $Plugins[$p][1] ? "deactivate" : "activate"; ?>&plug=<?php echo $p ?>"><?php echo $Plugins[$p][1] ? "D&eacute;sa" : "A"; ?>ctiver le plugin</a>
-		<?php if($Plugins[$p][1]): ?></td><td width="20%"><a href="?stat=reload&plug=<?php echo $p ?>">Recharger</a><?php endif; ?>
+		<td><?php echo $Plugins[$p]; ?></td>
+		<td <?php echo in_array($p,$APlugins) ? 'width="21%"' : 'colspan="2"'; ?> ><a href="?stat=<?php echo in_array($p,$APlugins) ? "deactivate" : "activate"; ?>&plug=<?php echo $p ?>"><?php echo in_array($p,$APlugins) ? "D&eacute;sa" : "A"; ?>ctiver le plugin</a>
+		<?php if(in_array($p,$APlugins)): ?></td><td width="21%"><a href="?stat=reload&plug=<?php echo $p ?>">Recharger</a><?php endif; ?>
 		</td>
 	</tr>
 <?php } ?>
 </table>
+
 </p>
 <p id="tableBunnyPluginServer">
 </p>
@@ -102,8 +125,9 @@ if(isset($_SESSION['message']) && empty($_GET)) {
 	</tr>
 <?php
 	$i = 0;
-	$cbunnies = $ojnAPI->getListOfConnectedBunnies(false);
-	$bunnies = $ojnAPI->getListOfBunnies(false);
+	$cbunnies = $ojnAPI->getApiMapped("bunnies/getListofAllConnectedBunnies?".$ojnAPI->getToken());
+	$bunnies = $ojnAPI->getApiMapped("bunnies/getListofAllBunnies?".$ojnAPI->getToken());
+    if(!empty($bunnies))
 	foreach($bunnies as $mac=>$name){
 ?>
 	<tr<?php echo $i++ % 2 ? " class='l2'" : "" ?>>
@@ -115,6 +139,7 @@ if(isset($_SESSION['message']) && empty($_GET)) {
 <?php } ?>
 </table>
 </center>
+
 <h1 id="ztamps">Liste des Ztamps</h1>
 <p>Voici la liste des ztamps enregistr&eacute;s sur ce serveur.</p>
 <center>
@@ -126,7 +151,8 @@ if(isset($_SESSION['message']) && empty($_GET)) {
 	</tr>
 <?php
 	$i = 0;
-	$Ztamps = $ojnAPI->getListOfZtamps(false);
+	$Ztamps = $ojnAPI->getApiMapped("ztamps/getListOfAllZtamps?".$ojnAPI->getToken());
+    if(!empty($Ztamps))
 	foreach($Ztamps as $id=>$name){
 ?>
 	<tr<?php echo $i++ % 2 ? " class='l2'" : "" ?>>
@@ -137,6 +163,33 @@ if(isset($_SESSION['message']) && empty($_GET)) {
 <?php } ?>
 </table>
 </center>
-<?php 
-require_once 'include/append.php' 
+
+<h1 id="userlist">Liste des Utilisateurs</h1>
+<p>Voici la liste des comptes enregistr&eacute;s sur ce serveur.</p>
+<center>
+<table style="width: 80%">
+	<tr>
+		<th>Login</th>
+		<th>Username</th>
+		<th>Statut</th>
+	</tr>
+<?php
+	$i = 0;
+	$Users = $ojnAPI->getApiMapped("accounts/GetUserlist?".$ojnAPI->getToken());
+	$Online = $ojnAPI->getApiList("accounts/GetConnectedUsers?".$ojnAPI->getToken());
+	$Admins = $ojnAPI->getApiList("accounts/GetListOfAdmins?".$ojnAPI->getToken());
+    if(!empty($Users))
+	foreach($Users as $l=>$name){
+?>
+	<tr<?php echo $i++ % 2 ? " class='l2'" : "" ?>>
+		<td width="20%" <?php echo in_array($l,$Admins) ? 'style="font-weight:bold;"' :''; ?>><?php echo $l; ?></td>
+		<td><?php echo $name; ?></td>
+		<td width="20%"><?php echo in_array($l,$Online) ? "C":"D&eacute;c"; ?>onnect&eacute;</td>
+	</tr>
+<?php } ?>
+</table>
+</center>
+
+<?php
+require_once 'include/append.php'
 ?>

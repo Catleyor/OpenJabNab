@@ -1,14 +1,20 @@
 <?php
 require_once "include/common.php";
-if(!isset($_SESSION['connected']))
+if(!isset($_SESSION['token']))
 	header('Location: index.php');
 if(!empty($_GET['b'])) {
 		$_SESSION['bunny'] = $_GET['b'];
 		$bunnies = $ojnAPI->getListOfBunnies(false);
-		$_SESSION['bunny_name'] = !empty($bunnies[$_GET['b']]) ? $bunnies[$_GET['b']] : '';	
+		$_SESSION['bunny_name'] = !empty($bunnies[$_GET['b']]) ? $bunnies[$_GET['b']] : '';
 		header("Location: bunny.php");
 } elseif(isset($_GET['resetpwd'])) {
 	$_SESSION['message'] = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/resetPassword?".$ojnAPI->getToken());
+	header('Location: bunny.php');
+} elseif(isset($_GET['disconnect'])) {
+	$_SESSION['message'] = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/disconnect?".$ojnAPI->getToken());
+	header('Location: bunny.php');
+} elseif(isset($_GET['resetown'])) {
+	$_SESSION['message'] = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/resetOwner?".$ojnAPI->getToken());
 	header('Location: bunny.php');
 } elseif(!empty($_GET['single']) && !empty($_GET['double'])) {
 	$msg = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/setSingleClickPlugin?name=".$_GET['single']."&".$ojnAPI->getToken());
@@ -28,59 +34,88 @@ if(!empty($_GET['b'])) {
 	$_SESSION['bunny_name'] = $_GET['bunny_name'];
 	header('Location: bunny.php');
 }
+
+if(!empty($_GET['aVAPI'])) {
+	$st = (string)$_GET['aVAPI'];
+	if($st == "enable" || $st == "disable")
+		$_SESSION['message'] = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/".$st."VAPI?".$ojnAPI->getToken());
+	else
+		$_SESSION['message'] = "Error: Error in choice";
+	header("Location: bunny.php");
+}
+
 if(empty($_SESSION['bunny'])) {
 ?>
 <h1>Choix du lapin &agrave; configurer</h1>
 <ul>
 <?php
 	$bunnies = $ojnAPI->getListOfBunnies(false);
+    if(!empty($bunnies))
 	foreach($bunnies as $bunny => $nom)	{
 ?>
-	<li><?php echo $nom; ?> (<?php echo $bunny; ?>) <a href="bunny.php?b=<?php echo $bunny; ?>">>></a></li>		
+	<li><?php echo $nom; ?> (<?php echo $bunny; ?>) <a href="bunny.php?b=<?php echo $bunny; ?>">>></a></li>
 <?php
 	}
 ?>
 </ul>
-<?php 
+<?php
 } else {
+$Token = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/getVAPIToken?".$ojnAPI->getToken());
+$Token = isset($Token['value']) ? $Token['value'] : '';
+/* Status */
+$Status = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/getVAPIStatus?".$ojnAPI->getToken());
+$Status= (!empty($Status['value']) && $Status['value'] == "true") ? true : false;
+
 ?>
 <h1 id="bunny">Configuration du lapin '<?php echo !empty($_SESSION['bunny_name']) ? $_SESSION['bunny_name'] : $_SESSION['bunny']; ?>'</h1>
 <h2>Le lapin</h2>
-<form>
+<form method="get">
 <fieldset>
-<?php 
+<legend>Configuration</legend>
+<?php
 $plugins = $ojnAPI->getListOfPlugins(false);
-$bunnyPlugins = $ojnAPI->getListOfBunnyActivePlugins(false);
+$bunnyPlugins = $ojnAPI->getListOfBunnyEnabledPlugins(false);
 $actifs = $ojnAPI->bunnyListOfPlugins($_SESSION['bunny'],false);
 $clicks = $ojnAPI->getApiList("bunny/".$_SESSION['bunny']."/getClickPlugins?".$ojnAPI->getToken());
 ?>
-Nom : <input type="text" name="bunny_name" value="<?php echo $_SESSION['bunny_name']; ?>"> <input type="submit" value="Enregistrer">
-</fieldset>
-</form>
-<form>
-<fieldset>
-<input name="resetpwd" type="submit" value="Remettre a zero le mot de passe">
-</fieldset>
-</form>
-<form>
-<fieldset>
+Nom : <input type="text" name="bunny_name" value="<?php echo $_SESSION['bunny_name']; ?>"><input type="submit" value="Enregistrer">
+</form><br /><br />
+<form method="get">
 Plugin simple click : <select name="single">
 <option value="none">Aucun</option>
 <?php foreach($actifs as $plugin) { ?>
-<option value="<?=$plugin ?>" <?php echo ($plugin == $clicks[0] ? ' selected="selected"' : '') ?>><?php echo $plugin; ?></option>
+<option value="<?php echo $plugin; ?>" <?php echo ($plugin == $clicks[0] ? ' selected="selected"' : '') ?>><?php echo $plugins[$plugin]; ?></option>
 <?php } ?>
-</select>
+</select><br />
 Plugin double click : <select name="double">
 <option value="none">Aucun</option>
 <?php foreach($actifs as $plugin) { ?>
-<option value="<?=$plugin ?>" <?php echo ($plugin == $clicks[1] ? ' selected="selected"' : '') ?>><?php echo $plugin; ?></option>
+<option value="<?php echo $plugin; ?>" <?php echo ($plugin == $clicks[1] ? ' selected="selected"' : '') ?>><?php echo $plugins[$plugin]; ?></option>
 <?php } ?>
-</select>
+</select><br />
 <input type="submit" value="Enregistrer">
-</fieldset>
+</form><br />
+VioletAPIToken: <?php echo $Token ; ?><br />
+<form method="get">
+VioletAPI: <input type="radio" name="aVAPI" value="enable" <?php echo $Status ? 'checked="checked"' : ''; ?>/> Activer
+<input type="radio" name="aVAPI" value="disable" <?php echo !$Status ? 'checked="checked"' : ''; ?> /> D&eacute;sactiver
+<input type="submit" value="Enregister">
 </form>
+<form method="get">
+<input name="disconnect" type="submit" value="Deconnecter le lapin">
+</form>
+</fieldset>
+<?php if($Infos['isAdmin']): ?>
+<fieldset>
+<legend>Debug features</legend>
+<form method="get">
+<input name="resetpwd" type="submit" value="Remettre a zero le mot de passe">
+<input name="resetown" type="submit" value="Liberer le lapin de son maitre">
+</form>
+</fieldset>
+<?php endif; ?>
 <h2>Plugins</h2>
-<?php 
+<?php
 if(isset($_SESSION['message']) && empty($_GET)) {
 	if(isset($_SESSION['message']['ok'])) { ?>
 	<div class="ok_msg">
@@ -106,8 +141,8 @@ if(isset($_SESSION['message']) && empty($_GET)) {
 ?>
 	<tr<?php echo $i++ % 2 ? " class='l2'" : "" ?>>
 		<td><?php echo $plugins[$plugin]; ?></td>
-		<td width="20%"><a href='bunny.php?stat=<?php echo in_array($plugin, $actifs) ? "unregister" : "register"; ?>&plug=<?php echo $plugin; ?>'><?php echo in_array($plugin, $actifs) ? "D&eacute;sa" : "A"; ?>ctiver le plugin</a></td>
-		<td width="20%"><?php echo in_array($plugin, $actifs)?"<a href='bunny_plugin.php?p=$plugin'>Configurer / Utiliser</a>":""?></td>
+		<td <?php echo in_array($plugin, $actifs) ? 'width="20%"' : 'colspan="2"'; ?>><a href='bunny.php?stat=<?php echo in_array($plugin, $actifs) ? "unregister" : "register"; ?>&plug=<?php echo $plugin; ?>'><?php echo in_array($plugin, $actifs) ? "D&eacute;sa" : "A"; ?>ctiver le plugin</a></td>
+		<?php if(in_array($plugin, $actifs)): ?><td width="20%"><?php echo in_array($plugin, $actifs)?"<a href='bunny_plugin.php?p=$plugin'>Configurer / Utiliser</a>":""?></td><?php endif; ?>
 	</tr>
 <?php } ?>
 </table>

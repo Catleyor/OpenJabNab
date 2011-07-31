@@ -20,16 +20,20 @@ public:
 	static BunnyManager & Instance();
 
 	static Bunny * GetBunny(PluginInterface *, QByteArray const&);
+	static Bunny * GetBunny(QByteArray const&);
 	static void PluginStateChanged(PluginInterface *);
 	static void Init();
 	static void LoadBunnies();
 	static void Close();
 
+	static QList<QByteArray> GetConnectedBunniesList(void);
+
 	// API
 	static void InitApiCalls();
+	int GetConnectedBunnyCount();
+	int GetBunnyCount();
 
 protected:
-	static Bunny * GetBunny(QByteArray const&);
 	static Bunny * GetConnectedBunny(QByteArray const&);
 	static QVector<Bunny *> GetConnectedBunnies();
 	static void PluginLoaded(PluginInterface *);
@@ -38,6 +42,9 @@ protected:
 	// API
 	API_CALL(Api_GetListOfConnectedBunnies);
 	API_CALL(Api_GetListOfBunnies);
+	API_CALL(Api_AddBunny);
+	API_CALL(Api_GetListOfAllConnectedBunnies);
+	API_CALL(Api_GetListOfAllBunnies);
 
 private:
 	BunnyManager();

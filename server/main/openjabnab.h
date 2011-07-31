@@ -9,7 +9,7 @@
 class OpenJabNab : public QCoreApplication
 {
 	Q_OBJECT
-	
+
 public:
 	OpenJabNab(int argc, char ** argv);
 	void Close();
@@ -26,6 +26,7 @@ private:
 	QTcpServer * httpListener;
 	QTcpServer * xmppListener;
 	bool httpApi;
+	bool httpVioletApi;
 	bool httpViolet;
 	bool standAlone;
 };

@@ -3,6 +3,7 @@
 
 #include <QDateTime>
 #include <QList>
+#include <QDir>
 #include <QHash>
 #include "global.h"
 #include "account.h"
@@ -21,6 +22,7 @@ public:
 	static AccountManager & Instance();
 
 	Account const& GetAccount(QByteArray const&);
+	static Account* GetAccountByLogin(QByteArray const&);
 	static Account const& Guest();
 	QByteArray GetToken(QString const& login, QByteArray const& hash);
 
@@ -34,6 +36,7 @@ private:
 	void LoadAccounts();
 	void SaveAccounts();
 	static void InitApiCalls();
+	QDir accountsDir;
 	QList<Account *> listOfAccounts;
 	QHash<QString, Account *> listOfAccountsByName;
 	QHash<QByteArray, TokenData> listOfTokens;
@@ -44,7 +47,13 @@ private:
 	API_CALL(Api_RegisterNewAccount);
 	API_CALL(Api_AddBunny);
 	API_CALL(Api_RemoveBunny);
+    API_CALL(Api_RemoveZtamp);
 	API_CALL(Api_SetToken);
+	API_CALL(Api_SetAdmin);
+	API_CALL(Api_GetUserInfos);
+	API_CALL(Api_GetUserlist);
+	API_CALL(Api_GetConnectedUsers);
+	API_CALL(Api_GetListOfAdmins);
 };
 
 inline void AccountManager::Init()

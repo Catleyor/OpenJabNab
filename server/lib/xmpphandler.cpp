@@ -18,9 +18,9 @@ XmppHandler::XmppHandler(QTcpSocket * s, bool standAlone):pluginManager(PluginMa
 	incomingXmppSocket = s;
 	bunny = 0;
 	currentAuthStep = 0;
-	
+
 	isStandAlone = standAlone;
-	
+
 	// Bunny -> OpenJabNab socket
 	connect(incomingXmppSocket, SIGNAL(disconnected()), this, SLOT(Disconnect()));
 	incomingXmppSocket->setParent(this);
@@ -68,9 +68,12 @@ void XmppHandler::HandleBunnyXmppMessage()
 {
 	QByteArray data = incomingXmppSocket->readAll();
 	bool handled = false;
-
-	NetworkDump::Log("XMPP Bunny", data);
-	
+	if(data != " ") {
+		if(bunny)
+			NetworkDump::Log(QString("XMPP Bunny (%1)").arg(QString(bunny->GetID())), data);
+		else
+			NetworkDump::Log("XMPP Bunny", data);
+	}
 	// Replace OpenJabNab's domain if we are connected to Violet
 	if(!isStandAlone)
 		data.replace(OjnXmppDomain, VioletXmppDomain);
@@ -92,7 +95,7 @@ void XmppHandler::HandleBunnyXmppMessage()
 			return;
 		}
 	}
-	
+
 	// No bunny yet, forward unless we are in standAlone mode
 	if(!bunny)
 	{
@@ -213,7 +216,7 @@ void XmppHandler::HandleBunnyXmppMessage()
 		// Bunny's ping packet, nothing to do
 		handled = true;
 	}
-	
+
 	// If the message wasn't handled, forward it to Violet unless we are in standAlone mode
 	if (!handled)
 	{
@@ -321,14 +324,17 @@ void XmppHandler::WriteToBunny(QByteArray const& d)
 	// Replace Violet's domain
 	QByteArray data = d;
 	data.replace(VioletXmppDomain, OjnXmppDomain);
-	
+
 	incomingXmppSocket->write(data);
 	incomingXmppSocket->flush();
 }
 
 void XmppHandler::WriteToBunnyAndLog(QByteArray const& d)
 {
-	NetworkDump::Log("XMPP To Bunny", d);
+	if(bunny)
+		NetworkDump::Log(QString("XMPP To Bunny (%1)").arg(QString(bunny->GetID())), d);
+	else
+		NetworkDump::Log("XMPP To Bunny", d);
 	WriteToBunny(d);
 }
 
@@ -344,7 +350,7 @@ void XmppHandler::WriteDataToBunny(QByteArray const& b)
 		msg.append("<packet xmlns='violet:packet' format='1.0' ttl='604800'>");
 		msg.append(b.toBase64());
 		msg.append("</packet></message>");
-		NetworkDump::Log("XMPP To Bunny", msg);
+		NetworkDump::Log(QString("XMPP To Bunny (%1)").arg(QString(bunny->GetID())), msg);
 		WriteToBunny(msg);
 		msgNb++;
 	}

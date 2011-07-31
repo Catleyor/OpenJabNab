@@ -31,46 +31,75 @@ QByteArray ApiManager::ApiAnswer::GetData()
 
 ApiManager::ApiAnswer * ApiManager::ProcessApiCall(QString const& request, HTTPRequest & hRequest)
 {
-	Account const& account = hRequest.HasArg("token")?AccountManager::Instance().GetAccount(hRequest.GetArg("token").toAscii()):AccountManager::Guest();
-	hRequest.RemoveArg("token");
+	if(request.startsWith("/ojn/FR/api"))
+	{
+		return ProcessBunnyVioletApiCall(request, hRequest);
+	}
+	else
+	{
+		Account const& account = hRequest.HasArg("token")?AccountManager::Instance().GetAccount(hRequest.GetArg("token").toAscii()):AccountManager::Guest();
+		hRequest.RemoveArg("token");
 
-	if(request.startsWith("global/"))
-		return ProcessGlobalApiCall(account, request.mid(7), hRequest);
-	
-	if(request.startsWith("plugins/"))
-		return PluginManager::Instance().ProcessApiCall(account, request.mid(8), hRequest);
+		if(request.startsWith("global/"))
+			return ProcessGlobalApiCall(account, request.mid(7), hRequest);
 
-	if(request.startsWith("plugin/"))
-		return ProcessPluginApiCall(account, request.mid(7), hRequest);
+		if(request.startsWith("plugins/"))
+			return PluginManager::Instance().ProcessApiCall(account, request.mid(8), hRequest);
 
-	if(request.startsWith("bunnies/"))
-		return BunnyManager::Instance().ProcessApiCall(account, request.mid(8), hRequest);
+		if(request.startsWith("plugin/"))
+			return ProcessPluginApiCall(account, request.mid(7), hRequest);
 
-	if(request.startsWith("bunny/"))
-		return ProcessBunnyApiCall(account, request.mid(6), hRequest);
-	
-	if(request.startsWith("ztamps/"))
-		return ZtampManager::Instance().ProcessApiCall(account, request.mid(7), hRequest);
+		if(request.startsWith("bunnies/"))
+			return BunnyManager::Instance().ProcessApiCall(account, request.mid(8), hRequest);
 
-	if(request.startsWith("ztamp/"))
-		return ProcessZtampApiCall(account, request.mid(6), hRequest);
-	
-	if(request.startsWith("accounts/"))
-		return AccountManager::Instance().ProcessApiCall(account, request.mid(9), hRequest);
+		if(request.startsWith("bunny/"))
+			return ProcessBunnyApiCall(account, request.mid(6), hRequest);
 
-	return new ApiManager::ApiError(QString("Unknown Api Call : %1").arg(hRequest.toString()));
+		if(request.startsWith("ztamps/"))
+			return ZtampManager::Instance().ProcessApiCall(account, request.mid(7), hRequest);
+
+		if(request.startsWith("ztamp/"))
+			return ProcessZtampApiCall(account, request.mid(6), hRequest);
+
+		if(request.startsWith("accounts/"))
+			return AccountManager::Instance().ProcessApiCall(account, request.mid(9), hRequest);
+
+		return new ApiManager::ApiError(QString("Unknown Api Call : %1").arg(hRequest.toString()));
+	}
 }
 
 ApiManager::ApiAnswer * ApiManager::ProcessGlobalApiCall(Account const& account, QString const& request, HTTPRequest const& hRequest)
 {
-	if(!account.HasGlobalAccess(Account::Read))
-			return new ApiManager::ApiError("Access denied");
-
 	if(request == "about")
 	{
 		return new ApiManager::ApiString("OpenJabNab v0.01 - (Build " __DATE__ " / " __TIME__ ")");
 	}
-	else if (request == "getListOfApiCalls")
+	else if(request == "ping")
+	{
+		return new ApiManager::ApiString(QString::number(BunnyManager::Instance().GetConnectedBunnyCount()) + "/" + QString::number(GlobalSettings::GetInt("Config/MaxNumberOfBunnies", 64)) + "/" + QString::number(GlobalSettings::GetInt("Config/MaxBurstNumberOfBunnies", GlobalSettings::GetInt("Config/MaxNumberOfBunnies", 64))));
+	}
+	else if (request == "stats")
+	{
+		int bunnies = BunnyManager::Instance().GetBunnyCount();
+		int connectedBunnies = BunnyManager::Instance().GetConnectedBunnyCount();
+
+		int ztamps = ZtampManager::Instance().GetZtampCount();
+
+		int plugins = PluginManager::Instance().GetPluginCount();
+		int enabledPlugins = PluginManager::Instance().GetEnabledPluginCount();
+
+		QString stats = "<bunnies>" + QString::number(bunnies) + "</bunnies>";
+		stats += "<connected_bunnies>" + QString::number(connectedBunnies) + "</connected_bunnies>";
+		stats += "<ztamps>" + QString::number(ztamps) + "</ztamps>";
+		stats += "<plugins>" + QString::number(plugins) + "</plugins>";
+		stats += "<enabled_plugins>" + QString::number(enabledPlugins) + "</enabled_plugins>";
+		return new ApiManager::ApiXml(stats);
+	}
+
+	if(!account.HasAccess(Account::AcGlobal,Account::Read))
+			return new ApiManager::ApiError("Access denied");
+
+	if (request == "getListOfApiCalls")
 	{
 		// Todo send a list with available api calls
 	}
@@ -80,10 +109,10 @@ ApiManager::ApiAnswer * ApiManager::ProcessGlobalApiCall(Account const& account,
 ApiManager::ApiAnswer * ApiManager::ProcessPluginApiCall(Account const& account, QString const& request, HTTPRequest & hRequest)
 {
 	QStringList list = QString(request).split('/', QString::SkipEmptyParts);
-	
+
 	if(list.size() != 2)
 		return new ApiManager::ApiError(QString("Malformed Plugin Api Call : %1").arg(hRequest.toString()));
-		
+
 	QString const& pluginName = list.at(0);
 	QString const& functionName = list.at(1);
 
@@ -100,12 +129,12 @@ ApiManager::ApiAnswer * ApiManager::ProcessPluginApiCall(Account const& account,
 ApiManager::ApiAnswer * ApiManager::ProcessBunnyApiCall(Account const& account, QString const& request, HTTPRequest const& hRequest)
 {
 	QStringList list = QString(request).split('/', QString::SkipEmptyParts);
-	
+
 	if(list.size() < 2)
 		return new ApiManager::ApiError(QString("Malformed Bunny Api Call : %1").arg(hRequest.toString()));
-		
+
 	QByteArray const& bunnyID = list.at(0).toAscii();
-	
+
 	if(!account.HasBunnyAccess(bunnyID))
 		return new ApiManager::ApiError("Access denied to this bunny");
 
@@ -134,15 +163,34 @@ ApiManager::ApiAnswer * ApiManager::ProcessBunnyApiCall(Account const& account, 
 		return new ApiManager::ApiError(QString("Malformed Plugin Api Call : %1").arg(hRequest.toString()));
 }
 
+ApiManager::ApiAnswer * ApiManager::ProcessBunnyVioletApiCall(QString const& request, HTTPRequest const& hRequest)
+{
+	QStringList list = QString(request).split('/', QString::SkipEmptyParts);
+
+	if(list.size() < 3)
+		return new ApiManager::ApiError(QString("Malformed Bunny Api Call : %1").arg(hRequest.toString()));
+
+	QString serial = hRequest.GetArg("sn");
+
+	Bunny * b = BunnyManager::GetBunny(serial.toAscii());
+
+	if(list.size() == 3)
+	{
+		return b->ProcessVioletApiCall(hRequest);
+	}
+	else
+		return new ApiManager::ApiError(QString("Malformed Plugin Api Call : %1").arg(hRequest.toString()));
+}
+
 ApiManager::ApiAnswer * ApiManager::ProcessZtampApiCall(Account const& account, QString const& request, HTTPRequest const& hRequest)
 {
 	QStringList list = QString(request).split('/', QString::SkipEmptyParts);
-	
+
 	if(list.size() < 2)
 		return new ApiManager::ApiError(QString("Malformed Ztamp Api Call : %1").arg(hRequest.toString()));
-		
+
 	QByteArray const& ztampID = list.at(0).toAscii();
-	
+
 	if(!account.HasZtampAccess(ztampID))
 		return new ApiManager::ApiError("Access denied to this ztamp");
 
@@ -194,7 +242,7 @@ QString ApiManager::ApiString::GetInternalData()
 }
 
 QString ApiManager::ApiList::GetInternalData()
-{ 
+{
 	QString tmp;
 	tmp += "<list>";
 	foreach (QString b, list)
@@ -204,7 +252,7 @@ QString ApiManager::ApiList::GetInternalData()
 }
 
 QString ApiManager::ApiMappedList::GetInternalData()
-{ 
+{
 	QString tmp;
 	tmp += "<list>";
 	QMapIterator<QString, QVariant> i(list);
@@ -214,4 +262,26 @@ QString ApiManager::ApiMappedList::GetInternalData()
 	}
 	tmp += "</list>";
 	return tmp;
+}
+
+void ApiManager::ApiViolet::AddMessage(QString m, QString c)
+{
+	string += "<message>" + m + "</message>";
+	string += "<comment>" + c + "</comment>";
+}
+
+void ApiManager::ApiViolet::AddEarPosition(int l, int r)
+{
+	string += "<message>POSITIONEAR</message>";
+	string += "<leftposition>" + QString::number(l) + "</leftposition>";
+	string += "<rightposition>" + QString::number(r) + "</rightposition>";
+}
+
+QByteArray ApiManager::ApiViolet::GetData()
+{
+	QString tmp("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+	tmp.append("<rsp>");
+	tmp.append(GetInternalData());
+	tmp.append("</rsp>");
+	return tmp.toUtf8();
 }

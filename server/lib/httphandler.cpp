@@ -10,10 +10,11 @@
 #include "openjabnab.h"
 #include "settings.h"
 
-HttpHandler::HttpHandler(QTcpSocket * s, bool api, bool violet, bool standAlone):pluginManager(PluginManager::Instance())
+HttpHandler::HttpHandler(QTcpSocket * s, bool api, bool violetapi, bool violet, bool standAlone):pluginManager(PluginManager::Instance())
 {
 	incomingHttpSocket = s;
 	httpApi = api;
+	httpVioletApi = violetapi;
 	httpViolet = violet;
 	bytesToReceive = 0;
 	isStandAlone = standAlone;
@@ -49,6 +50,19 @@ void HttpHandler::HandleBunnyHTTPRequest()
 		else
 			incomingHttpSocket->write("Api is disabled");
 	}
+	else if (uri.startsWith("/ojn/FR/api"))
+	{
+		NetworkDump::Log("Violet Api Call", request.GetRawURI());
+		if(httpVioletApi)
+		{
+			std::auto_ptr<ApiManager::ApiAnswer> apianswer(ApiManager::Instance().ProcessApiCall(uri, request));
+			QByteArray answer = apianswer->GetData();
+			incomingHttpSocket->write(answer);
+			NetworkDump::Log("Violet Api Answer", answer);
+		}
+		else
+			incomingHttpSocket->write("Violet Api is disabled");
+	}
 	else if(httpViolet)
 	{
 		NetworkDump::Log("HTTP Request", request.GetRawURI());
@@ -58,6 +72,7 @@ void HttpHandler::HandleBunnyHTTPRequest()
 		{
 			if (uri.startsWith("/vl/sendMailXMPP.jsp"))
 			{
+
 				LogWarning("Problem with the bunny, he's calling sendMailXMPP.jsp !");
 				request.reply = "Not Allowed !";
 			}
@@ -73,7 +88,7 @@ void HttpHandler::HandleBunnyHTTPRequest()
 		}
 		pluginManager.HttpRequestAfter(request);
 		incomingHttpSocket->write(request.reply);
-		if(!uri.contains(".mp3") && !uri.contains(".chor") && !uri.contains("bc.jsp") && request.reply.size() < 256) // Don't dump too big answers
+		if(!uri.contains("itmode.jsp") && !uri.contains(".mp3") && !uri.contains(".chor") && !uri.contains("bc.jsp") && request.reply.size() < 256) // Don't dump too big answers
 			NetworkDump::Log("HTTP Answer", request.reply);
 	}
 	else
@@ -82,8 +97,7 @@ void HttpHandler::HandleBunnyHTTPRequest()
 		incomingHttpSocket->write("Request was : <br />");
 		incomingHttpSocket->write(request.toString().toAscii());
 	}
-	incomingHttpSocket->close();
-	deleteLater();
+	Disconnect();
 }
 
 void HttpHandler::Disconnect()

@@ -40,6 +40,16 @@ public:
 			QString error;
 	};
 
+	class OJN_EXPORT ApiXml : public ApiAnswer
+	{
+		public:
+			ApiXml():string(QString()) {}
+			ApiXml(QString s):string(s) {}
+			QString GetInternalData() { return string; }
+		private:
+			QString string;
+	};
+
 	class OJN_EXPORT ApiOk : public ApiAnswer
 	{
 		public:
@@ -77,11 +87,27 @@ public:
 			QMap<QString, QVariant> list;
 	};
 
+	class OJN_EXPORT ApiViolet : public ApiAnswer
+	{
+		public:
+			ApiViolet(QString m, QString c) { AddMessage(m, c); }
+			ApiViolet():string(QString()) {}
+			ApiViolet(QString s):string(s) {}
+			QByteArray GetData();
+			void AddMessage(QString, QString);
+			void AddEarPosition(int, int);
+			void AddXml(QString s) { string += s; }
+			QString GetInternalData() { return string; }
+		private:
+			QString string;
+	};
+
 private:
 	ApiManager();
 	ApiAnswer * ProcessGlobalApiCall(Account const&, QString const&, HTTPRequest const&);
 	ApiAnswer * ProcessPluginApiCall(Account const&, QString const&, HTTPRequest &);
 	ApiAnswer * ProcessBunnyApiCall(Account const&, QString const&, HTTPRequest const&);
 	ApiAnswer * ProcessZtampApiCall(Account const&, QString const&, HTTPRequest const&);
+	ApiAnswer * ProcessBunnyVioletApiCall(QString const&, HTTPRequest const&);
 };
 #endif

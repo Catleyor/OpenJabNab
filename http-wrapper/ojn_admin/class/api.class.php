@@ -3,13 +3,26 @@ class ojnApi {
 	private $Bunnies;								/* Registered Bunnies */
 	private $ConnectedBunnies;				/* Connected Bunnies */
 	private $Plugins;								/* All available plugins */
-	private $ActivePlugins;						/* Active Plugins */
-	private $BunnyPlugins;						/* Plugins for bunny */
-	private $BunnyEnabledPlugins;			/* Plugins enabled for a bunny use */
-	
-	private $BunnyActivePlugins;				/* Plugins enabled on a bunny */
-	
+	private $EnabledPlugins;						/* Active Plugins */
+	private $BunnyPlugins;						/* Available plugins for a bunny */
+	private $BunnyEnabledPlugins;			/* Enabled plugins for a bunny */
+	private $ZtampPlugins;						/* Available plugins for a Ztamp */
+	private $ZtampEnabledPlugins;			/* Enabled plugins for a Ztamp */
+
+	private $BunnyActivePlugins;				/* Enabled plugins on a specific bunny */
+
+	private $Ztamps;								/* Known Ztamps */
+	private $ZtampActivePlugins;			/* Enabled plugins for a ztamp */
+
+	private $Stats;
+
 	public function __construct() {
+	}
+
+	public function getStats($reload = false) {
+		if(empty($this->Stats) || $reload)
+			$this->Stats = $this->getApiString("global/stats?".$this->getToken());
+		return $this->Stats;
 	}
 
 	public function getListOfZtamps($reload = false) {
@@ -30,10 +43,10 @@ class ojnApi {
 		return $this->ConnectedBunnies;
 	}
 
-	public function getListOfActivePlugins($reload) {
-		if(empty($this->ActivePlugins) || $reload)
-			$this->ActivePlugins = $this->getApiList("plugins/getListOfEnabledPlugins?".$this->getToken());
-		return $this->ActivePlugins;
+	public function getListOfEnabledPlugins($reload) {
+		if(empty($this->EnabledPlugins) || $reload)
+			$this->EnabledPlugins = $this->getApiList("plugins/getListOfEnabledPlugins?".$this->getToken());
+		return $this->EnabledPlugins;
 	}
 
 	public function getListOfPlugins($reload) {
@@ -41,7 +54,7 @@ class ojnApi {
 			$this->Plugins = $this->getApiMapped("plugins/getListOfPlugins?".$this->getToken());
 		return $this->Plugins;
 	}
-	
+
 	public function loginAccount($login, $pass) {
 		$loginAccount = $this->getApiString("accounts/auth?login=".$login."&pass=".$pass);
 		if(isset($loginAccount['error']))
@@ -55,10 +68,22 @@ class ojnApi {
 		return $this->BunnyPlugins;
 	}
 
-	public function getListOfBunnyActivePlugins($reload) {
+	public function getListOfBunnyEnabledPlugins($reload) {
 		if(empty($this->BunnyEnabledPlugins) || $reload)
 			$this->BunnyEnabledPlugins = $this->getApiList("plugins/getListOfBunnyEnabledPlugins?".$this->getToken());
 		return $this->BunnyEnabledPlugins;
+	}
+
+	public function getListOfZtampPlugins($reload)	{
+		if(empty($this->ZtampPlugins) || $reload)
+			$this->ZtampPlugins = $this->getApiList("plugins/getListOfZtampPlugins?".$this->getToken());
+		return $this->ZtampPlugins;
+	}
+
+	public function getListOfZtampEnabledPlugins($reload) {
+		if(empty($this->ZtampEnabledPlugins) || $reload)
+			$this->ZtampEnabledPlugins = $this->getApiList("plugins/getListOfZtampEnabledPlugins?".$this->getToken());
+		return $this->ZtampEnabledPlugins;
 	}
 
 	public function bunnyListOfPlugins($serial,$reload) {
@@ -77,8 +102,12 @@ class ojnApi {
 		return $this->transformList($this->getApi($url));
 	}
 
-	private function getApiMapped($url)	{
+	public function getApiMapped($url)	{
 		return $this->transformMappedList($this->getApi($url));
+	}
+
+	public function getApiXMLArray($url) {
+		return $this->XmlToArray($this->getApi($url));
 	}
 
 	private function getApi($url) {
@@ -94,10 +123,11 @@ class ojnApi {
 	}
 
 	private function loadXmlString($string) {
-		return @simplexml_load_string($string);
+		return simplexml_load_string($string);
 	}
 
 	public function setToken($token) {
+		$this->GetApi('accounts/settoken?tk='.$token.'&'.$this->getToken());
 		$_SESSION['token'] = $token;
 	}
 
@@ -127,7 +157,7 @@ class ojnApi {
 	private function transformValue($value) {
 		if(isset($value->value))	{
 			$value = (array)$value;
-			$value = $value['value'];
+			$value = (string)$value['value'];
 		} else
 			$value = false;
 		return $value;
@@ -135,15 +165,34 @@ class ojnApi {
 
 	private function transformList($list) {
 		$list = (array)$list;
-		$list = (array)$list['list'];
+        if(isset($list['list']))
+    		$list = (array)$list['list'];
 		$temp = array();
-		if(is_array($list['item'])) {
-			foreach($list['item'] as $item)
-				$temp[] = (string)$item;
-		}
-		else
-			$temp = array($list['item']);
+        if(isset($list['item'])) {
+                if(is_array($list['item'])) {
+                foreach($list['item'] as $item)
+                    $temp[] = $item;
+            } else
+                $temp = array($list['item']);
+        }
 		return $temp;
 	}
+
+	private function XmlToArray($xml) {
+		$name = $xml->getName();
+		$nbc = count($xml->children());
+		$val = str_replace(array('>','<'),array('&gt;','&lt;'),(string)$xml);
+		if($nbc == 0)
+			$a=array($name => $val);
+		else {
+			$t =array();
+			foreach($xml->children() as $nme => $xmlchild) {
+				$t[]=$this->XmlToArray($xmlchild);
+			}
+			$a = array($name=>($nbc == 1 ? $t[0] : $t));
+		}
+		return $a;
+	}
+
 }
 ?>

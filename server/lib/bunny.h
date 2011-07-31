@@ -42,13 +42,17 @@ public:
 	void SetPluginSetting(QString const&, QString const&, QVariant const&);
 	void RemovePluginSetting(QString const&, QString const&);
 
+	QVariant GetGlobalSetting(QString const&, QVariant const& defaultValue = QVariant()) const;
+	void SetGlobalSetting(QString const&, QVariant const&);
+	void RemoveGlobalSetting(QString const&);
+
 	bool HasPlugin(PluginInterface * p) const;
 	QList<QString> GetListOfPlugins();
 
 	void XmppBunnyMessage(QByteArray const&);
 	void XmppVioletMessage(QByteArray const&);
 	bool XmppVioletPacketMessage(Packet const& p);
-	
+
 	void Booting();
 	void Authenticating();
 	void Authenticated();
@@ -59,9 +63,9 @@ public:
 
 	bool IsIdle() const;
 	bool IsSleeping() const;
-	
+
 	QByteArray GetInitPacket() const;
-	
+
 	bool OnClick(PluginInterface::ClickType);
 	bool OnEarsMove(int, int);
 	bool OnRFID(QByteArray const&);
@@ -72,10 +76,11 @@ public:
 
 	// API
 	static void InitApiCalls();
+	ApiManager::ApiAnswer * ProcessVioletApiCall(HTTPRequest const&);
 
 private slots:
 	void SaveConfig();
-	
+
 private:
 	Bunny(QByteArray const&);
 	void LoadConfig();
@@ -83,7 +88,7 @@ private:
 	void RemovePlugin(PluginInterface * p);
 	void OnConnect();
 	void OnDisconnect();
-	
+
 	QString CheckPlugin(PluginInterface *, bool isAssociated = false);
 
 	// API
@@ -98,9 +103,16 @@ private:
 	API_CALL(Api_SetBunnyName);
 	API_CALL(Api_SetService);
 	API_CALL(Api_ResetPassword);
+	API_CALL(Api_ResetOwner);
+	API_CALL(Api_Disconnect);
+	API_CALL(Api_enableVApi);
+	API_CALL(Api_disableVApi);
+	API_CALL(Api_getVApiStatus);
+	API_CALL(Api_getVApiToken);
+	API_CALL(Api_setVApiToken);
 
 	enum State state;
-	
+
 	QByteArray id;
 	QByteArray xmppResource;
 	QString configFileName;
@@ -110,14 +122,11 @@ private:
 	QList<PluginInterface*> listOfPluginsPtr;
 	QTimer * saveTimer;
 	XmppHandler * xmppHandler;
-	
+
 	PluginInterface * singleClickPlugin;
 	PluginInterface * doubleClickPlugin;
-	
-	QVariant GetGlobalSetting(QString const&, QVariant const& defaultValue = QVariant()) const;
-	void SetGlobalSetting(QString const&, QVariant const&);
-	void RemoveGlobalSetting(QString const&);
-	
+
+
 	// RFID Tags
 	QHash<QByteArray, QString> knownRFIDTags;
 };
@@ -149,12 +158,12 @@ inline bool Bunny::IsAuthenticated() const
 
 inline QByteArray Bunny::GetID() const
 {
-	return id.toHex(); 
+	return id.toHex();
 }
 
 inline QByteArray Bunny::GetXmppResource() const
 {
-	return xmppResource; 
+	return xmppResource;
 }
 
 inline void Bunny::SetXmppResource(QByteArray const& r)
