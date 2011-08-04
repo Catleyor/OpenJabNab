@@ -28,6 +28,15 @@ void PluginSleep::OnBunnyDisconnect(Bunny * b)
 	CleanCrons(b);
 }
 
+bool PluginSleep::OnRFID(Bunny * b, QByteArray const& tag) {
+	if(tag != b->GetPluginSetting(GetName(), "RFID", QString()).toString())
+	{
+		b->SendPacket(SleepPacket(SleepPacket::Sleep));
+		return true;
+	}
+	return false;
+}
+
 bool PluginSleep::IsConfigValid(QList<QVariant> const& wakeupList, QList<QVariant> const& sleepList)
 {
 	if(wakeupList.count() == 0 && sleepList.count() == 0) // Nothing configured, nothing to do
@@ -136,6 +145,8 @@ void PluginSleep::InitApiCalls()
 	DECLARE_PLUGIN_BUNNY_API_CALL("wakeup()", PluginSleep, Api_Wakeup);
 	DECLARE_PLUGIN_BUNNY_API_CALL("setup(wakeupList,sleepList)", PluginSleep, Api_Setup);
 	DECLARE_PLUGIN_BUNNY_API_CALL("getsetup()", PluginSleep, Api_GetSetup);
+	DECLARE_PLUGIN_BUNNY_API_CALL("getRFID()", PluginSleep, Api_getRFID);
+	DECLARE_PLUGIN_BUNNY_API_CALL("setRFID(tag)", PluginSleep, Api_setRFID);
 }
 
 PLUGIN_BUNNY_API_CALL(PluginSleep::Api_Sleep)
@@ -221,4 +232,20 @@ PLUGIN_BUNNY_API_CALL(PluginSleep::Api_GetSetup)
 	}
 
 	return new ApiManager::ApiList(setup);
+}
+
+PLUGIN_BUNNY_API_CALL(PluginSleep::Api_getRFID)
+{
+	Q_UNUSED(account);
+	Q_UNUSED(hRequest);
+	return new ApiManager::ApiString(bunny->GetPluginSetting(GetName(), "RFID", QString()).toString());
+}
+
+PLUGIN_BUNNY_API_CALL(PluginSleep::Api_setRFID)
+{
+	Q_UNUSED(account);
+	QString tag = hRequest.GetArg("tag");
+
+	bunny->SetPluginSetting(GetName(), "RFID",tag);
+	return new ApiManager::ApiOk(QString("Bunny will go to sleep on Ztamp %1").arg(tag));
 }
