@@ -36,6 +36,8 @@ private:
 	void LoadAccounts();
 	void SaveAccounts();
 	static void InitApiCalls();
+	void DeleteAccount(QByteArray const&);
+
 	QDir accountsDir;
 	QList<Account *> listOfAccounts;
 	QHash<QString, Account *> listOfAccountsByName;
@@ -54,6 +56,7 @@ private:
 	API_CALL(Api_GetUserlist);
 	API_CALL(Api_GetConnectedUsers);
 	API_CALL(Api_GetListOfAdmins);
+	API_CALL(Api_RemoveAccount);
 };
 
 inline void AccountManager::Init()

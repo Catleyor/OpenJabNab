@@ -141,6 +141,21 @@ void AccountManager::SaveAccounts()
 	}
 }
 
+void AccountManager::DeleteAccount(QByteArray const& login) {
+	Account *a = GetAccountByLogin(login);
+	if(a == NULL)
+		LogError(QString("Account not found: %1").arg(QString(login)));
+	else {
+		LogInfo(QString("Deleted Account: %1").arg(QString(a->GetLogin())));
+		listOfAccountsByName.remove(a->GetLogin());
+		listOfAccounts.removeAll(a);
+		QFile accountFile(accountsDir.absoluteFilePath(QString("%1.dat").arg(a->GetLogin())));
+		delete a;
+		if(accountFile.exists())
+			accountFile.remove();
+	}
+}
+
 Account const& AccountManager::Guest()
 {
 	static Account guest(Account::Guest);
@@ -215,6 +230,7 @@ void AccountManager::InitApiCalls()
 	DECLARE_API_CALL("GetUserlist()", &AccountManager::Api_GetUserlist);
 	DECLARE_API_CALL("GetConnectedUsers()", &AccountManager::Api_GetConnectedUsers);
 	DECLARE_API_CALL("GetListOfAdmins()", &AccountManager::Api_GetListOfAdmins);
+	DECLARE_API_CALL("removeAccount(user)", &AccountManager::Api_RemoveAccount);
 }
 
 API_CALL(AccountManager::Api_Auth)
@@ -421,4 +437,14 @@ API_CALL(AccountManager::Api_SetAdmin)
 		return new ApiManager::ApiError("Login not found.");
 	ac->setAdmin();
 	return new ApiManager::ApiOk(QString("user '%1' is now admin").arg(login));
+}
+
+API_CALL(AccountManager::Api_RemoveAccount) {
+	if(!account.IsAdmin())
+		return new ApiManager::ApiError("Access denied");
+	QString login = hRequest.GetArg("user");
+	if(login== account.GetLogin())
+		return new ApiManager::ApiError("You can't delete your account");
+	DeleteAccount(login.toAscii());
+	return new ApiManager::ApiOk(QString("Account '%1' deleted.").arg(login));
 }

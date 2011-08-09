@@ -39,10 +39,13 @@ protected:
 	// API
 	API_CALL(Api_GetListOfZtamps);
 	API_CALL(Api_GetListOfAllZtamps);
+	API_CALL(Api_RemoveZtamp);
 
 private:
 	ZtampManager();
 	void LoadAllZtamps();
+	void DeleteZtamp(QByteArray const&);
+
 	QDir ztampsDir;
 	static QHash<QByteArray, Ztamp *> listOfZtamps;
 };

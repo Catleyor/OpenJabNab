@@ -17,25 +17,28 @@ bool PluginBoot::HttpRequestHandle(HTTPRequest & request)
 	{
 		QString version = request.GetArg("v");
 		QString serialnumber = request.GetArg("m").remove(':');
-		
-		Bunny * b = BunnyManager::GetBunny(this, serialnumber.toAscii());
-		b->Booting();
-	
-		LogInfo(QString("Requesting BOOT for tag %1 with version %2").arg(serialnumber,version));
 
-		QString bcFileName = GlobalSettings::Get("Config/Bootcode", "").toString();
-		QFile bootcodeFile(bcFileName);
-		if(bootcodeFile.open(QFile::ReadOnly))
-		{
-			QByteArray dataByteArray = bootcodeFile.readAll();
-			request.reply = dataByteArray;
-			return true;
-		}
-		else
-		{
-			LogError("Bootcode not found : " + bcFileName);
+		Bunny * b = BunnyManager::GetBunny(this, serialnumber.toAscii());
+		if(b != NULL) {
+			b->Booting();
+
+			LogInfo(QString("Requesting BOOT for tag %1 with version %2").arg(serialnumber,version));
+
+			QString bcFileName = GlobalSettings::Get("Config/Bootcode", "").toString();
+			QFile bootcodeFile(bcFileName);
+			if(bootcodeFile.open(QFile::ReadOnly))
+			{
+				QByteArray dataByteArray = bootcodeFile.readAll();
+				request.reply = dataByteArray;
+				return true;
+			}
+			else
+			{
+				LogError("Bootcode not found : " + bcFileName);
+				return false;
+			}
+		} else
 			return false;
-		}
 	}
 	else
 		return false;

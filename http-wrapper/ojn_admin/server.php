@@ -19,6 +19,18 @@ if((!empty($_GET['plug']) && !empty($_GET['stat'])) || (!empty($_POST['plug']) &
 		$_SESSION['message']['error'] = "No plugin with such name.";
 	header('Location: server.php');
 }
+if(isset($_GET['RemoveAccount']) && !empty($_GET['user'])) {
+	$_SESSION['message'] = $ojnAPI->getApiString('accounts/removeAccount?user='.$_GET['user'].'&'.$ojnAPI->getToken());
+	header('Location: server.php');
+}
+if(isset($_GET['RemoveBunny']) && !empty($_GET['serial'])) {
+	$_SESSION['message'] = $ojnAPI->getApiString('bunnies/removeBunny?serial='.$_GET['serial'].'&'.$ojnAPI->getToken());
+	header('Location: server.php');
+}
+if(isset($_GET['RemoveZtamp']) && !empty($_GET['serial'])) {
+	$_SESSION['message'] = $ojnAPI->getApiString('ztamps/removeZtamp?serial='.$_GET['serial'].'&'.$ojnAPI->getToken());
+	header('Location: server.php');
+}
 
 ?>
 <h1 id="config">Configuration du serveur</h1>
@@ -121,7 +133,7 @@ if(isset($_SESSION['message']) && empty($_GET)) {
 		<th>MAC</th>
 		<th>Nom</th>
 		<th>Statut</th>
-		<th>Actions</th>
+		<th colspan="2">Actions</th>
 	</tr>
 <?php
 	$i = 0;
@@ -135,6 +147,7 @@ if(isset($_SESSION['message']) && empty($_GET)) {
 		<td><?php echo $name; ?></td>
 		<td width="20%"><?php	echo isset($cbunnies[$mac]) ? 'C': 'D&eacute;c' ?>onnect&eacute;</td>
 		<td width="20%"><a href='bunny.php?b=<?php echo $mac; ?>'>Configurer</a>
+		<td width="20%"><a href='?RemoveBunny&serial=<?php echo $mac; ?>'>Supprimer</a>
 	</tr>
 <?php } ?>
 </table>
@@ -147,7 +160,7 @@ if(isset($_SESSION['message']) && empty($_GET)) {
 	<tr>
 		<th>ID</th>
 		<th>Nom</th>
-		<th>Actions</th>
+		<th colspan="2">Actions</th>
 	</tr>
 <?php
 	$i = 0;
@@ -159,6 +172,7 @@ if(isset($_SESSION['message']) && empty($_GET)) {
 		<td width="20%"><?php echo $id; ?></td>
 		<td><?php echo $name; ?></td>
 		<td width="20%"><a href='ztamp.php?z=<?php echo $id; ?>'>Configurer</a>
+		<td width="20%"><a href='?RemoveZtamp&serial=<?php echo $mac; ?>'>Supprimer</a>
 	</tr>
 <?php } ?>
 </table>
@@ -172,6 +186,7 @@ if(isset($_SESSION['message']) && empty($_GET)) {
 		<th>Login</th>
 		<th>Username</th>
 		<th>Statut</th>
+		<th>Actions</th>
 	</tr>
 <?php
 	$i = 0;
@@ -185,6 +200,7 @@ if(isset($_SESSION['message']) && empty($_GET)) {
 		<td width="20%" <?php echo in_array($l,$Admins) ? 'style="font-weight:bold;"' :''; ?>><?php echo $l; ?></td>
 		<td><?php echo $name; ?></td>
 		<td width="20%"><?php echo in_array($l,$Online) ? "C":"D&eacute;c"; ?>onnect&eacute;</td>
+		<td width="20%"><a href="?RemoveAccount&user=<?php echo $l; ?>">Supprimer</a></td>
 	</tr>
 <?php } ?>
 </table>

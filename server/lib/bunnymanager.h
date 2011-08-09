@@ -43,15 +43,17 @@ protected:
 	API_CALL(Api_GetListOfConnectedBunnies);
 	API_CALL(Api_GetListOfBunnies);
 	API_CALL(Api_AddBunny);
+	API_CALL(Api_RemoveBunny);
 	API_CALL(Api_GetListOfAllConnectedBunnies);
 	API_CALL(Api_GetListOfAllBunnies);
 
 private:
 	BunnyManager();
 	void LoadAllBunnies();
+	void DeleteBunny(QByteArray const&);
+
 	QDir bunniesDir;
 	static QHash<QByteArray, Bunny *> listOfBunnies;
-	static QHash<QByteArray, Bunny *> allBunnies;
 };
 
 inline void BunnyManager::Init()

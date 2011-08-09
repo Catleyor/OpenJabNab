@@ -45,6 +45,7 @@ void BunnyManager::InitApiCalls()
 	DECLARE_API_CALL("getListOfConnectedBunnies()", &BunnyManager::Api_GetListOfConnectedBunnies);
 	DECLARE_API_CALL("getListOfBunnies()", &BunnyManager::Api_GetListOfBunnies);
 	DECLARE_API_CALL("addBunny(serial)", &BunnyManager::Api_AddBunny);
+	DECLARE_API_CALL("removeBunny(serial)", &BunnyManager::Api_RemoveBunny);
 	DECLARE_API_CALL("getListofAllBunnies()",&BunnyManager::Api_GetListOfAllBunnies);
 	DECLARE_API_CALL("getListofAllConnectedBunnies()",&BunnyManager::Api_GetListOfAllConnectedBunnies);
 }
@@ -62,6 +63,8 @@ int BunnyManager::GetBunnyCount()
 Bunny * BunnyManager::GetBunny(QByteArray const& bunnyHexID)
 {
 	QByteArray bunnyID = QByteArray::fromHex(bunnyHexID);
+	if(bunnyID.isEmpty())
+		return NULL;
 
 	if(listOfBunnies.contains(bunnyID))
 		return listOfBunnies.value(bunnyID);
@@ -74,6 +77,8 @@ Bunny * BunnyManager::GetBunny(QByteArray const& bunnyHexID)
 Bunny * BunnyManager::GetBunny(PluginInterface * p, QByteArray const& bunnyHexID)
 {
 	Bunny * b = GetBunny(bunnyHexID);
+	if(b==NULL)
+			return NULL;
 
 	if(p->GetType() != PluginInterface::BunnyPlugin)
 		return b;
@@ -131,6 +136,18 @@ void BunnyManager::PluginUnloaded(PluginInterface * p)
 	foreach(Bunny * b, listOfBunnies)
 		if (b->IsConnected())
 			b->PluginUnloaded(p);
+}
+
+void BunnyManager::DeleteBunny(QByteArray const& ID) {
+	Bunny *b = GetBunny(ID);
+	if(b != NULL) {
+		LogInfo(QString("Deleted Bunny: %1").arg(QString(b->GetID())));
+		listOfBunnies.remove(QByteArray::fromHex(b->GetID()));
+		QFile bunnyFile(bunniesDir.absoluteFilePath(QString("%1.dat").arg(QString(b->GetID()))));
+		delete b;
+		if(bunnyFile.exists())
+			bunnyFile.remove();
+	}
 }
 
 
@@ -200,6 +217,16 @@ API_CALL(BunnyManager::Api_AddBunny) {
 
 	GetBunny(bunnyID);
 	return new ApiManager::ApiOk("Bunny successfully added");
+}
+
+API_CALL(BunnyManager::Api_RemoveBunny) {
+	if(!account.HasAccess(Account::AcBunnies,Account::Write))
+		return new ApiManager::ApiError("Access denied");
+
+	QByteArray bunnyID = hRequest.GetArg("serial").toAscii();
+
+	DeleteBunny(bunnyID);
+	return new ApiManager::ApiOk("Bunny successfully deleted");
 }
 
 QHash<QByteArray, Bunny *> BunnyManager::listOfBunnies;
