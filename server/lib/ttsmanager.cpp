@@ -16,7 +16,6 @@
 TTSManager::TTSManager()
 {
 	ttsDir = QCoreApplication::applicationDirPath();
-	ttsDir.setNameFilters(QStringList("*.so"));
 
 	if (!ttsDir.cd("tts"))
 	{
