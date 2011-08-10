@@ -15,7 +15,7 @@ LIBS += -L../bin/ -lcommon
 MOC_DIR = ./tmp/moc
 OBJECTS_DIR = ./tmp/obj
 win32 {
-	QMAKE_CXXFLAGS_WARN_ON += -WX
+	QMAKE_CXXFLAGS_WARN_ON += -Wextra
 }
 unix {
 	QMAKE_LFLAGS += -Wl,-rpath,\'\$$ORIGIN\'
