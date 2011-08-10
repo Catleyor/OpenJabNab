@@ -77,8 +77,8 @@ if(isset($_SESSION['message']) && empty($_GET)) {
 ?>
 	<tr<?php echo $i++ % 2 ? " class='l2'" : "" ?>>
 		<td><?php echo $Plugins[$p]; ?></td>
-		<td width="21%"><a href="server_plugin.php?p=<?php echo $p; ?>">Configurer</a></td>
-		<td width="21%"><?php if($Plugins[$p][1]): ?><a href="?stat=reload&plug=<?php echo $p ?>">Recharger</a><?php endif; ?></td>
+		<td width="15%"><a href="server_plugin.php?p=<?php echo $p; ?>">Configurer</a></td>
+		<td width="15%"><?php if($Plugins[$p][1]): ?><a href="?stat=reload&plug=<?php echo $p ?>">Recharger</a><?php endif; ?></td>
 	</tr>
 <?php } ?>
 </table>
@@ -94,9 +94,9 @@ if(isset($_SESSION['message']) && empty($_GET)) {
 ?>
 	<tr<?php echo $i++ % 2 ? " class='l2'" : "" ?>>
 		<td><?php echo $Plugins[$p]; ?></td>
-		<td width="14%"><a href="server_plugin.php?p=<?php echo $p; ?>">Configurer</a></td>
-		<td <?php echo in_array($p,$APlugins) ? 'width="14%"' : 'colspan="2"'; ?>><a href="?stat=<?php echo in_array($p,$APlugins) ? "deactivate" : "activate"; ?>&plug=<?php echo $p ?>"><?php echo in_array($p,$APlugins) ? "D&eacute;sa" : "A"; ?>ctiver le plugin</a>
-		<?php if(in_array($p,$APlugins)): ?><td width="14%"><a href="?stat=reload&plug=<?php echo $p ?>">Recharger</a></td><?php endif; ?>
+		<td width="15%"><a href="server_plugin.php?p=<?php echo $p; ?>">Configurer</a></td>
+		<td <?php echo in_array($p,$APlugins) ? 'width="15%"' : 'colspan="2"'; ?>><a href="?stat=<?php echo in_array($p,$APlugins) ? "deactivate" : "activate"; ?>&plug=<?php echo $p ?>"><?php echo in_array($p,$APlugins) ? "D&eacute;sa" : "A"; ?>ctiver le plugin</a>
+		<?php if(in_array($p,$APlugins)): ?><td width="15%"><a href="?stat=reload&plug=<?php echo $p ?>">Recharger</a></td><?php endif; ?>
 	</tr>
 <?php } ?>
 </table>
@@ -113,8 +113,8 @@ if(isset($_SESSION['message']) && empty($_GET)) {
 ?>
 	<tr<?php echo $i++ % 2 ? " class='l2'" : "" ?>>
 		<td><?php echo $Plugins[$p]; ?></td>
-		<td <?php echo in_array($p,$APlugins) ? 'width="21%"' : 'colspan="2"'; ?> ><a href="?stat=<?php echo in_array($p,$APlugins) ? "deactivate" : "activate"; ?>&plug=<?php echo $p ?>"><?php echo in_array($p,$APlugins) ? "D&eacute;sa" : "A"; ?>ctiver le plugin</a>
-		<?php if(in_array($p,$APlugins)): ?></td><td width="21%"><a href="?stat=reload&plug=<?php echo $p ?>">Recharger</a><?php endif; ?>
+		<td <?php echo in_array($p,$APlugins) ? 'width="15%"' : 'colspan="2"'; ?> ><a href="?stat=<?php echo in_array($p,$APlugins) ? "deactivate" : "activate"; ?>&plug=<?php echo $p ?>"><?php echo in_array($p,$APlugins) ? "D&eacute;sa" : "A"; ?>ctiver le plugin</a>
+		<?php if(in_array($p,$APlugins)): ?></td><td width="15%"><a href="?stat=reload&plug=<?php echo $p ?>">Recharger</a><?php endif; ?>
 		</td>
 	</tr>
 <?php } ?>
@@ -133,21 +133,24 @@ if(isset($_SESSION['message']) && empty($_GET)) {
 		<th>MAC</th>
 		<th>Nom</th>
 		<th>Statut</th>
+		<th>Account</th>
 		<th colspan="2">Actions</th>
 	</tr>
 <?php
 	$i = 0;
 	$cbunnies = $ojnAPI->getApiMapped("bunnies/getListofAllConnectedBunnies?".$ojnAPI->getToken());
 	$bunnies = $ojnAPI->getApiMapped("bunnies/getListofAllBunnies?".$ojnAPI->getToken());
+	$bOwners = $ojnAPI->getApiMapped("bunnies/getListofAllBunniesOwners?".$ojnAPI->getToken());
     if(!empty($bunnies))
 	foreach($bunnies as $mac=>$name){
 ?>
 	<tr<?php echo $i++ % 2 ? " class='l2'" : "" ?>>
-		<td width="20%"><?php echo $mac; ?></td>
+		<td width="15%"><?php echo $mac; ?></td>
 		<td><?php echo $name; ?></td>
-		<td width="20%"><?php	echo isset($cbunnies[$mac]) ? 'C': 'D&eacute;c' ?>onnect&eacute;</td>
-		<td width="20%"><a href='bunny.php?b=<?php echo $mac; ?>'>Configurer</a>
-		<td width="20%"><a href='?RemoveBunny&serial=<?php echo $mac; ?>'>Supprimer</a>
+		<td width="15%"><?php	echo isset($cbunnies[$mac]) ? 'C': 'D&eacute;c' ?>onnect&eacute;</td>
+		<td width="15%"><?php echo $bOwners[$mac]; ?></td>
+		<td width="15%"><a href='bunny.php?b=<?php echo $mac; ?>'>Configurer</a>
+		<td width="15%"><a href='?RemoveBunny&serial=<?php echo $mac; ?>'>Supprimer</a>
 	</tr>
 <?php } ?>
 </table>
@@ -160,19 +163,22 @@ if(isset($_SESSION['message']) && empty($_GET)) {
 	<tr>
 		<th>ID</th>
 		<th>Nom</th>
+		<th>Account</th>
 		<th colspan="2">Actions</th>
 	</tr>
 <?php
 	$i = 0;
 	$Ztamps = $ojnAPI->getApiMapped("ztamps/getListOfAllZtamps?".$ojnAPI->getToken());
+	$ZOwn = $ojnAPI->getApiMapped("ztamps/getListOfAllZtampsOwners?".$ojnAPI->getToken());
     if(!empty($Ztamps))
 	foreach($Ztamps as $id=>$name){
 ?>
 	<tr<?php echo $i++ % 2 ? " class='l2'" : "" ?>>
-		<td width="20%"><?php echo $id; ?></td>
+		<td width="15%"><?php echo $id; ?></td>
 		<td><?php echo $name; ?></td>
-		<td width="20%"><a href='ztamp.php?z=<?php echo $id; ?>'>Configurer</a>
-		<td width="20%"><a href='?RemoveZtamp&serial=<?php echo $mac; ?>'>Supprimer</a>
+		<td width="15%"><?php echo $ZOwn[$id]; ?></td>
+		<td width="15%"><a href='ztamp.php?z=<?php echo $id; ?>'>Configurer</a>
+		<td width="15%"><a href='?RemoveZtamp&serial=<?php echo $mac; ?>'>Supprimer</a>
 	</tr>
 <?php } ?>
 </table>
@@ -197,10 +203,10 @@ if(isset($_SESSION['message']) && empty($_GET)) {
 	foreach($Users as $l=>$name){
 ?>
 	<tr<?php echo $i++ % 2 ? " class='l2'" : "" ?>>
-		<td width="20%" <?php echo in_array($l,$Admins) ? 'style="font-weight:bold;"' :''; ?>><?php echo $l; ?></td>
+		<td width="15%" <?php echo in_array($l,$Admins) ? 'style="font-weight:bold;"' :''; ?>><?php echo $l; ?></td>
 		<td><?php echo $name; ?></td>
-		<td width="20%"><?php echo in_array($l,$Online) ? "C":"D&eacute;c"; ?>onnect&eacute;</td>
-		<td width="20%"><a href="?RemoveAccount&user=<?php echo $l; ?>">Supprimer</a></td>
+		<td width="15%"><?php echo in_array($l,$Online) ? "C":"D&eacute;c"; ?>onnect&eacute;</td>
+		<td width="15%"><a href="?RemoveAccount&user=<?php echo $l; ?>">Supprimer</a></td>
 	</tr>
 <?php } ?>
 </table>

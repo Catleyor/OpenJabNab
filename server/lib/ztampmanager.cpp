@@ -53,6 +53,7 @@ void ZtampManager::InitApiCalls()
 {
 	DECLARE_API_CALL("getListOfZtamps()", &ZtampManager::Api_GetListOfZtamps);
 	DECLARE_API_CALL("getListOfAllZtamps()", &ZtampManager::Api_GetListOfAllZtamps);
+	DECLARE_API_CALL("getListOfAllZtampsOwners()", &ZtampManager::Api_GetListOfAllZtampsOwners);
 	DECLARE_API_CALL("removeZtamp(serial)", &ZtampManager::Api_RemoveZtamp);
 }
 
@@ -148,6 +149,21 @@ API_CALL(ZtampManager::Api_GetListOfAllZtamps)
 
 	foreach(Ztamp * z, listOfZtamps)
 		list.insert(z->GetID(), z->GetZtampName());
+
+	return new ApiManager::ApiMappedList(list);
+}
+
+API_CALL(ZtampManager::Api_GetListOfAllZtampsOwners)
+{
+	Q_UNUSED(hRequest);
+
+	if(!account.IsAdmin())
+		return new ApiManager::ApiError("Access denied");
+
+	QMap<QString, QVariant> list;
+
+	foreach(Ztamp * z, listOfZtamps)
+		list.insert(z->GetID(), z->GetGlobalSetting("OwnerAccount",""));
 
 	return new ApiManager::ApiMappedList(list);
 }
