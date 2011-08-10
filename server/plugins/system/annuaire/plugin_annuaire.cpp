@@ -16,8 +16,17 @@ void PluginAnnuaire::OnBunnyConnect(Bunny * b)
 	QString server = GetSettings("global/URL", "").toString();
 	if(server != "") {
 		QHttp *http = new QHttp(server,80);
-		http->get("/nabconnection.php?m=" + b->GetID() + "&n="+ b->GetBunnyName() + "&s=" + GlobalSettings::GetString("OpenJabNabServers/PingServer"));
+		http->get("/nabconnection.php?m=" + b->GetID() + "&n="+ b->GetBunnyName() + "&s=" + GlobalSettings::GetString("OpenJabNabServers/PingServer")+"&status=on");
 	}
+}
+
+void PluginAnnuaire::OnBunnyDisconnect(Bunny * b)
+{
+   QString server = GetSettings("global/URL", "").toString();
+   if(server != "") {
+      QHttp *http = new QHttp(server,80);
+      http->get("/nabconnection.php?m=" + b->GetID() + "&n="+ b->GetBunnyName() + "&s=" + GlobalSettings::GetString("OpenJabNabServers/PingServer")+"&status=off");
+    }
 }
 
 /*******/

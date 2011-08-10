@@ -13,6 +13,7 @@ public:
 	virtual ~PluginAnnuaire();
 
 	void OnBunnyConnect(Bunny *);
+	void OnBunnyDisconnect(Bunny *);
 
 	void InitApiCalls();
 	PLUGIN_API_CALL(Api_setURL);
