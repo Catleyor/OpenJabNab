@@ -178,7 +178,7 @@ if(isset($_SESSION['message']) && empty($_GET)) {
 		<td><?php echo $name; ?></td>
 		<td width="15%"><?php echo $ZOwn[$id]; ?></td>
 		<td width="15%"><a href='ztamp.php?z=<?php echo $id; ?>'>Configurer</a>
-		<td width="15%"><a href='?RemoveZtamp&serial=<?php echo $mac; ?>'>Supprimer</a>
+		<td width="15%"><a href='?RemoveZtamp&serial=<?php echo $id; ?>'>Supprimer</a>
 	</tr>
 <?php } ?>
 </table>
