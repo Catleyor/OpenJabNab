@@ -10,6 +10,9 @@ if(!empty($_GET['b'])) {
 } elseif(isset($_GET['resetpwd'])) {
 	$_SESSION['message'] = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/resetPassword?".$ojnAPI->getToken());
 	header('Location: bunny.php');
+} elseif(isset($_GET['disconnect'])) {
+	$_SESSION['message'] = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/disconnect?".$ojnAPI->getToken());
+	header('Location: bunny.php');
 } elseif(isset($_GET['resetown'])) {
 	$_SESSION['message'] = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/resetOwner?".$ojnAPI->getToken());
 	header('Location: bunny.php');
@@ -29,6 +32,9 @@ if(!empty($_GET['b'])) {
 } else if(!empty($_GET['bunny_name'])) {
 	$_SESSION['message'] = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/setBunnyName?name=".urlencode($_GET['bunny_name'])."&".$ojnAPI->getToken());
 	$_SESSION['bunny_name'] = $_GET['bunny_name'];
+	header('Location: bunny.php');
+} else if(!empty($_GET['bTTS'])) {
+	$_SESSION['message'] = $BVoice = $ojnAPI->getApiString('bunny/'.$_SESSION['bunny'].'/setTTSVoice?voice='.$_GET['bTTS'].'&'.$ojnAPI->getToken());
 	header('Location: bunny.php');
 }
 
@@ -57,37 +63,43 @@ if(empty($_SESSION['bunny'])) {
 </ul>
 <?php
 } else {
+/* Violet API */
+	/* Token */
 $Token = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/getVAPIToken?".$ojnAPI->getToken());
 $Token = isset($Token['value']) ? $Token['value'] : '';
-/* Status */
+	/* Status */
 $Status = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/getVAPIStatus?".$ojnAPI->getToken());
 $Status= (!empty($Status['value']) && $Status['value'] == "true") ? true : false;
 
-?>
-<h1 id="bunny">Configuration du lapin '<?php echo !empty($_SESSION['bunny_name']) ? $_SESSION['bunny_name'] : $_SESSION['bunny']; ?>'</h1>
-<h2>Le lapin</h2>
-<form method="get">
-<fieldset>
-<legend>Configuration</legend>
-<?php
+/* TTS Stuff */
+$Voices = $ojnAPI->getApiList("server/tts/getListOfVoices?".$ojnAPI->getToken());
+$BVoice = $ojnAPI->getApiString('bunny/'.$_SESSION['bunny'].'/getTTSVoice?'.$ojnAPI->getToken());
+$BVoice = isset($BVoice['value']) ? $BVoice['value'] : '';
+
 $plugins = $ojnAPI->getListOfPlugins(false);
 $bunnyPlugins = $ojnAPI->getListOfBunnyEnabledPlugins(false);
 $actifs = $ojnAPI->bunnyListOfPlugins($_SESSION['bunny'],false);
 $clicks = $ojnAPI->getApiList("bunny/".$_SESSION['bunny']."/getClickPlugins?".$ojnAPI->getToken());
+
 ?>
+<h1 id="bunny">Configuration du lapin '<?php echo !empty($_SESSION['bunny_name']) ? $_SESSION['bunny_name'] : $_SESSION['bunny']; ?>'</h1>
+<h2>Le lapin</h2>
+<fieldset>
+<legend>Configuration</legend>
+<form method="get">
 Nom : <input type="text" name="bunny_name" value="<?php echo $_SESSION['bunny_name']; ?>"><input type="submit" value="Enregistrer">
 </form><br /><br />
 <form method="get">
 Plugin simple click : <select name="single">
 <option value="none">Aucun</option>
 <?php foreach($actifs as $plugin) { ?>
-<option value="<?=$plugin ?>" <?php echo ($plugin == $clicks[0] ? ' selected="selected"' : '') ?>><?php echo $plugins[$plugin]; ?></option>
+<option value="<?php echo $plugin; ?>" <?php echo ($plugin == $clicks[0] ? ' selected="selected"' : '') ?>><?php echo $plugins[$plugin]; ?></option>
 <?php } ?>
 </select><br />
 Plugin double click : <select name="double">
 <option value="none">Aucun</option>
 <?php foreach($actifs as $plugin) { ?>
-<option value="<?=$plugin ?>" <?php echo ($plugin == $clicks[1] ? ' selected="selected"' : '') ?>><?php echo $plugins[$plugin]; ?></option>
+<option value="<?php echo $plugin; ?>" <?php echo ($plugin == $clicks[1] ? ' selected="selected"' : '') ?>><?php echo $plugins[$plugin]; ?></option>
 <?php } ?>
 </select><br />
 <input type="submit" value="Enregistrer">
@@ -99,7 +111,18 @@ VioletAPI: <input type="radio" name="aVAPI" value="enable" <?php echo $Status ? 
 <input type="submit" value="Enregister">
 </form>
 <br />
-<a href="bunny_testservices.php">Send Ambient Packets/Test Services</a>
+<form method="get">
+TTSVoice : <select name="bTTS">
+<option value=""></option>
+<?php foreach($Voices as $v) { ?>
+<option value="<?php echo $v; ?>" <?php echo ($v == $BVoice ? ' selected="selected"' : '') ?>><?php echo ucfirst($v); ?></option>
+<?php } ?>
+</select><input type="submit" value="Enregistrer"></form><br />
+<form method="get">
+<input name="disconnect" type="submit" value="Deconnecter le lapin">
+</form>
+<br />
+<a href="bunny_testservices.php"> Test Services (AmbienPackets)</a>
 </fieldset>
 <?php if($Infos['isAdmin']): ?>
 <fieldset>

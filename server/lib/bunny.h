@@ -107,6 +107,9 @@ private:
 	API_CALL(Api_getVApiStatus);
 	API_CALL(Api_getVApiToken);
 	API_CALL(Api_setVApiToken);
+	API_CALL(Api_getTTSVoice);
+	API_CALL(Api_setTTSVoice);
+
 
 	enum State state;
 

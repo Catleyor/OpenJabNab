@@ -671,6 +671,9 @@ void Bunny::InitApiCalls()
 	DECLARE_API_CALL("getVAPIStatus()", &Bunny::Api_getVApiStatus);
 	DECLARE_API_CALL("getVAPIToken()", &Bunny::Api_getVApiToken);
 	DECLARE_API_CALL("setVAPIToken(tk)", &Bunny::Api_setVApiToken);
+
+	DECLARE_API_CALL("getTTSVoice()", &Bunny::Api_getTTSVoice);
+	DECLARE_API_CALL("setTTSVoice(voice)", &Bunny::Api_setTTSVoice);
 }
 
 API_CALL(Bunny::Api_AddPlugin)
@@ -894,4 +897,20 @@ API_CALL(Bunny::Api_setVApiToken)
 
 	SetGlobalSetting("VApiToken",hRequest.GetArg("tk").toAscii());
 	return new ApiManager::ApiOk(QString("VioletAPI Token updated."));
+}
+
+API_CALL(Bunny::Api_getTTSVoice)
+{
+	Q_UNUSED(account);
+	Q_UNUSED(hRequest);
+	return new ApiManager::ApiString(GetGlobalSetting("TTSVoice", "").toString());
+}
+
+API_CALL(Bunny::Api_setTTSVoice)
+{
+	Q_UNUSED(account);
+
+	QString voice = hRequest.GetArg("voice");
+	SetGlobalSetting("TTSVoice",voice.toAscii());
+	return new ApiManager::ApiOk(QString("TTS Voice set to '%1'").arg(voice));
 }
