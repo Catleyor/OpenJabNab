@@ -29,7 +29,7 @@ public:
 
 	static ApiManager & Instance();
 	ApiAnswer * ProcessApiCall(QString const&, HTTPRequest &);
-	
+
 	// Internal classes
 	class OJN_EXPORT ApiError : public ApiAnswer
 	{
@@ -108,6 +108,7 @@ private:
 	ApiAnswer * ProcessPluginApiCall(Account const&, QString const&, HTTPRequest &);
 	ApiAnswer * ProcessBunnyApiCall(Account const&, QString const&, HTTPRequest const&);
 	ApiAnswer * ProcessZtampApiCall(Account const&, QString const&, HTTPRequest const&);
+	ApiAnswer * ProcessServerApiCall(Account const&, QString const&, HTTPRequest const&);
 	ApiAnswer * ProcessBunnyVioletApiCall(QString const&, HTTPRequest const&);
 };
 #endif

@@ -22,6 +22,7 @@ TTSManager::TTSManager()
 		LogError("Unable to open tts directory !\n");
 		exit(-1);
 	}
+	InitApiCalls();
 }
 
 TTSManager & TTSManager::Instance()
@@ -127,7 +128,7 @@ bool TTSManager::ReloadTTS(QString const& name)
 	return false;
 }
 
-// Creatte TTS Song in /broadcast/tts/<name>/<voice>/[md5].mp3
+// Create TTS Song in /broadcast/tts/<name>/<voice>/[md5].mp3
 QByteArray TTSManager::CreateNewSound(QString text, QString voice, QString name, bool forceOverwrite)
 {
 	TTSInterface * tts = Instance().GetTTSByName(name);
@@ -138,4 +139,24 @@ QByteArray TTSManager::CreateNewSound(QString text, QString voice, bool forceOve
 {
 	TTSInterface * tts = Instance().GetTTSByName(GlobalSettings::Get("Config/TTS", "acapela").toString());
 	return tts->CreateNewSound(text, voice, forceOverwrite);
+}
+
+QList<QString> TTSManager::GetTTSVoices(void) {
+	return Instance().GetTTSByName(GlobalSettings::Get("Config/TTS", "acapela").toString())->getVoiceList();
+}
+
+/*******/
+/* API */
+/*******/
+
+void TTSManager::InitApiCalls()
+{
+	DECLARE_API_CALL("getListOfVoices()", &TTSManager::Api_getVoiceList);
+}
+
+API_CALL(TTSManager::Api_getVoiceList) {
+	Q_UNUSED(account);
+	Q_UNUSED(hRequest);
+
+	return new ApiManager::ApiList(GetTTSVoices());
 }

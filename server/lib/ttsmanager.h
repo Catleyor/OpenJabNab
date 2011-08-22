@@ -6,10 +6,11 @@
 #include <QList>
 #include "global.h"
 #include "ttsinterface.h"
+#include "apihandler.h"
 
 class TTSInterface;
 class QPluginLoader;
-class OJN_EXPORT TTSManager
+class OJN_EXPORT TTSManager: public ApiHandler<TTSManager>
 {
 public:
         static TTSManager & Instance();
@@ -18,7 +19,10 @@ public:
 	static QByteArray CreateNewSound(QString, QString, bool overwrite = false);
 	static QByteArray CreateNewSound(QString, QString, QString, bool overwrite = false);
 	TTSInterface * GetTTSByName(QString const& name) const;
-	
+	static QList<QString> GetTTSVoices(QString const&name);
+	static QList<QString> GetTTSVoices(void);
+
+
 protected:
 	static QStringList voiceList;
 	static QDir ttsFolder;
@@ -27,15 +31,19 @@ private:
 	TTSManager();
         void LoadTTSs();
         void UnloadTTSs();
-        bool LoadTTS(QString const&); 
-        bool UnloadTTS(QString const&); 
-        bool ReloadTTS(QString const&); 
+        bool LoadTTS(QString const&);
+        bool UnloadTTS(QString const&);
+        bool ReloadTTS(QString const&);
+	void InitApiCalls(void);
+
         QDir ttsDir;
         QList<TTSInterface *> listOfTTSs;
         QMap<TTSInterface *, QString> listOfTTSsFileName;
         QMap<TTSInterface *, QPluginLoader *> listOfTTSsLoader;
         QHash<QString, TTSInterface *> listOfTTSsByName;
         QHash<QString, TTSInterface *> listOfTTSsByFileName;
+
+	API_CALL(Api_getVoiceList);
 
 };
 
@@ -54,8 +62,7 @@ inline TTSInterface * TTSManager::GetTTSByName(QString const& name) const
 	if(listOfTTSsByName.contains(name))
 		return listOfTTSsByName.value(name);
 	return listOfTTSsByName.value("acapela");
-	
-}
 
+}
 
 #endif

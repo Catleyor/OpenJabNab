@@ -10,7 +10,7 @@
 #include "log.h"
 #include "settings.h"
 
-class Account; 
+class Account;
 
 class TTSInterface : public QObject
 {
@@ -19,7 +19,7 @@ public:
 
 	TTSInterface(QString name, QString visualName = QString());
 	virtual ~TTSInterface();
-	
+
 	// Called to init tts, return false if something is wrong
 	virtual bool Init() { return true; };
 
@@ -38,6 +38,9 @@ public:
 
 	// Plugin type
 	int GetType() const;
+
+	// Get Voicelist
+	QList<QString> getVoiceList();
 
 protected:
 	void SetEnable(bool);

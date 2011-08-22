@@ -9,6 +9,7 @@
 #include "httprequest.h"
 #include "plugininterface.h"
 #include "pluginmanager.h"
+#include "ttsmanager.h"
 
 ApiManager::ApiManager()
 {
@@ -63,6 +64,9 @@ ApiManager::ApiAnswer * ApiManager::ProcessApiCall(QString const& request, HTTPR
 
 		if(request.startsWith("accounts/"))
 			return AccountManager::Instance().ProcessApiCall(account, request.mid(9), hRequest);
+
+		if(request.startsWith("server/"))
+			return ProcessServerApiCall(account, request.mid(7), hRequest);
 
 		return new ApiManager::ApiError(QString("Unknown Api Call : %1").arg(hRequest.toString()));
 	}
@@ -217,6 +221,19 @@ ApiManager::ApiAnswer * ApiManager::ProcessZtampApiCall(Account const& account, 
 	}
 	else
 		return new ApiManager::ApiError(QString("Malformed Plugin Api Call : %1").arg(hRequest.toString()));
+}
+
+ApiManager::ApiAnswer * ApiManager::ProcessServerApiCall(Account const& account, QString const& request, HTTPRequest const& hRequest)
+{
+	QStringList list = QString(request).split('/', QString::SkipEmptyParts);
+
+	if(list.size() < 2)
+		return new ApiManager::ApiError(QString("Malformed Server Api Call : %1").arg(hRequest.toString()));
+
+	if(request.startsWith("tts/"))
+			return TTSManager::Instance().ProcessApiCall(account, request.mid(4), hRequest);
+	else
+		return new ApiManager::ApiError(QString("Unknown Server Api Call : %1").arg(hRequest.toString()));
 }
 
 QString ApiManager::ApiAnswer::SanitizeXML(QString const& msg)
