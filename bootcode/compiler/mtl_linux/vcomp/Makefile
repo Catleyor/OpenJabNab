@@ -23,5 +23,7 @@ libvcomp.a : $(OBJS)
 # %.o : %.cpp
 # 	g++ -c $^ -o $@
 
+CPPFLAGS=-fpermissive
+
 clean :
 	rm $(OBJS)
