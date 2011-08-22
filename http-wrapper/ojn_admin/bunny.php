@@ -10,9 +10,6 @@ if(!empty($_GET['b'])) {
 } elseif(isset($_GET['resetpwd'])) {
 	$_SESSION['message'] = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/resetPassword?".$ojnAPI->getToken());
 	header('Location: bunny.php');
-} elseif(isset($_GET['disconnect'])) {
-	$_SESSION['message'] = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/disconnect?".$ojnAPI->getToken());
-	header('Location: bunny.php');
 } elseif(isset($_GET['resetown'])) {
 	$_SESSION['message'] = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/resetOwner?".$ojnAPI->getToken());
 	header('Location: bunny.php');
@@ -84,13 +81,13 @@ Nom : <input type="text" name="bunny_name" value="<?php echo $_SESSION['bunny_na
 Plugin simple click : <select name="single">
 <option value="none">Aucun</option>
 <?php foreach($actifs as $plugin) { ?>
-<option value="<?php echo $plugin; ?>" <?php echo ($plugin == $clicks[0] ? ' selected="selected"' : '') ?>><?php echo $plugins[$plugin]; ?></option>
+<option value="<?=$plugin ?>" <?php echo ($plugin == $clicks[0] ? ' selected="selected"' : '') ?>><?php echo $plugins[$plugin]; ?></option>
 <?php } ?>
 </select><br />
 Plugin double click : <select name="double">
 <option value="none">Aucun</option>
 <?php foreach($actifs as $plugin) { ?>
-<option value="<?php echo $plugin; ?>" <?php echo ($plugin == $clicks[1] ? ' selected="selected"' : '') ?>><?php echo $plugins[$plugin]; ?></option>
+<option value="<?=$plugin ?>" <?php echo ($plugin == $clicks[1] ? ' selected="selected"' : '') ?>><?php echo $plugins[$plugin]; ?></option>
 <?php } ?>
 </select><br />
 <input type="submit" value="Enregistrer">
@@ -101,9 +98,8 @@ VioletAPI: <input type="radio" name="aVAPI" value="enable" <?php echo $Status ? 
 <input type="radio" name="aVAPI" value="disable" <?php echo !$Status ? 'checked="checked"' : ''; ?> /> D&eacute;sactiver
 <input type="submit" value="Enregister">
 </form>
-<form method="get">
-<input name="disconnect" type="submit" value="Deconnecter le lapin">
-</form>
+<br />
+<a href="bunny_testservices.php">Send Ambient Packets/Test Services</a>
 </fieldset>
 <?php if($Infos['isAdmin']): ?>
 <fieldset>
