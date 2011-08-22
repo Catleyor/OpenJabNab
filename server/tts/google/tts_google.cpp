@@ -9,7 +9,7 @@ Q_EXPORT_PLUGIN2(tts_google, TTSGoogle)
 
 TTSGoogle::TTSGoogle():TTSInterface("google", "Google")
 {
-	voiceList << "fr";
+	voiceList << "fr"  << "en" << "ja";
 }
 
 TTSGoogle::~TTSGoogle()
@@ -27,13 +27,13 @@ QByteArray TTSGoogle::CreateNewSound(QString text, QString voice, bool forceOver
 	QDir outputFolder = ttsFolder;
 	if(!outputFolder.exists(voice))
 		outputFolder.mkdir(voice);
-	
+
 	if(!outputFolder.cd(voice))
 	{
 		LogError(QString("Cant create TTS Folder : %1").arg(ttsFolder.absoluteFilePath(voice)));
 		return QByteArray();
 	}
-	
+
 	// Compute fileName
 	QString fileName = QCryptographicHash::hash(text.toAscii(), QCryptographicHash::Md5).toHex().append(".mp3");
 	QString filePath = outputFolder.absoluteFilePath(fileName);
