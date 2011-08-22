@@ -903,7 +903,7 @@ API_CALL(Bunny::Api_getTTSVoice)
 {
 	Q_UNUSED(account);
 	Q_UNUSED(hRequest);
-	return new ApiManager::ApiString(GetGlobalSetting("TTSVoice", "").toString());
+	return new ApiManager::ApiString(GetTTSVoice());
 }
 
 API_CALL(Bunny::Api_setTTSVoice)

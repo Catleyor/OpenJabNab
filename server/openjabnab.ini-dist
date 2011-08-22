@@ -12,6 +12,7 @@ AllowUserManageBunny=false
 AllowUserManageZtamp=false
 SessionTimeout=300
 TTS=acapela
+TTSVoice=claire
 MaxNumberOfBunnies=64
 MaxBurstNumberOfBunnies=72
 

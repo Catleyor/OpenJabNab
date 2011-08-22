@@ -71,6 +71,8 @@ public:
 	void PluginLoaded(PluginInterface *);
 	void PluginUnloaded(PluginInterface *);
 
+	 QString GetTTSVoice(void) const;
+
 	// API
 	static void InitApiCalls();
 	ApiManager::ApiAnswer * ProcessVioletApiCall(HTTPRequest const&);
@@ -199,6 +201,10 @@ inline bool Bunny::SetBunnyPassword(QByteArray const& bunnyPassword)
 		return true;
 	}
 	return false;
+}
+
+inline QString Bunny::GetTTSVoice(void) const {
+	return GetGlobalSetting("TTSVoice", GlobalSettings::Get("Config/TTSVoice", "claire")).toString();
 }
 
 inline bool Bunny::HasPlugin(PluginInterface * p) const
