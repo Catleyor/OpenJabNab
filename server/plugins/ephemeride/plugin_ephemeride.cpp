@@ -27,11 +27,6 @@ PluginEphemeride::~PluginEphemeride()
 
 bool PluginEphemeride::Init()
 {
-	QByteArray aujourdhui = TTSManager::CreateNewSound("Aujourd'hui nous fetons les", "claire");
-	if(aujourdhui.isNull())
-		return false;
-
-	aujourdhuiMessage = "MU " + aujourdhui + "\nPL 3\nMW\n";
 	return true;
 }
 
@@ -149,11 +144,11 @@ PluginEphemeride_Worker::PluginEphemeride_Worker(PluginEphemeride * p, Bunny * b
 
 void PluginEphemeride_Worker::run()
 {
-	QByteArray message = plugin->aujourdhuiMessage;
+	QByteArray message;
 	QRegExp rx(">(.*)</span>");
 	if(rx.indexIn(buffer) != -1)
 	{
-		QByteArray prenomFile = TTSManager::CreateNewSound(rx.cap(1).trimmed(), "claire");
+		QByteArray prenomFile = TTSManager::CreateNewSound(QString("Aujourd'hui nous fetons les %1").arg(rx.cap(1).trimmed()), bunny->GetTTSVoice());
 		message += "MU " + prenomFile + "\nPL 3\nMW\n";
 		emit done(true, bunny, message);
 	}

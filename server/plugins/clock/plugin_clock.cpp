@@ -39,7 +39,7 @@ void PluginClock::OnCron(Bunny *, QVariant)
 			QString hour = QDateTime::currentDateTime().toString("h");
 			QByteArray file;
 			if(voice == "tts")
-				file = TTSManager::CreateNewSound("Il est " + hour + " heure", "julie");
+				file = TTSManager::CreateNewSound("Il est " + hour + " heure", b->GetTTSVoice());
 			else
 			{
 				// Fetch available files

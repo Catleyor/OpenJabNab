@@ -347,22 +347,22 @@ void PluginWeather_Worker::run()
 		}
 		else
 		{
-			QByteArray where = TTSManager::CreateNewSound(QString("Météo pour %1.").arg(sCity), "claire");
+			QByteArray where = TTSManager::CreateNewSound(QString("Météo pour %1.").arg(sCity), bunny->GetTTSVoice());
 			message += "MU "+where+"\nPL 3\nMW\n";
 			if(current!=0)
 			{
-				QByteArray maintenant = TTSManager::CreateNewSound("actuellement, ", "claire");
-				QByteArray temperature = TTSManager::CreateNewSound(QString::number(iCurrentTemp) + " degrés", "claire");
-				QByteArray meteo = TTSManager::CreateNewSound(sCurrentCond, "claire");
+				QByteArray maintenant = TTSManager::CreateNewSound("actuellement, ", bunny->GetTTSVoice());
+				QByteArray temperature = TTSManager::CreateNewSound(QString::number(iCurrentTemp) + " degrés", bunny->GetTTSVoice());
+				QByteArray meteo = TTSManager::CreateNewSound(sCurrentCond, bunny->GetTTSVoice());
  				message += "MU "+maintenant+"\nPL 3\nMW\n";
  				message += "MU "+meteo+"\nPL 3\nMW\n";
  				message += "MU "+temperature+"\nPL 3\nMW\n";
 			}
 			if(forecast!=0)
 			{
-				QByteArray prevision = TTSManager::CreateNewSound(sForecast, "claire");
-				QByteArray meteo = TTSManager::CreateNewSound(sForecastCond, "claire");
-				QByteArray temperature = TTSManager::CreateNewSound("entre "+QString::number(iForecastLow) + " et "+QString::number(iForecastHigh) + " degrés", "claire");
+				QByteArray prevision = TTSManager::CreateNewSound(sForecast, bunny->GetTTSVoice());
+				QByteArray meteo = TTSManager::CreateNewSound(sForecastCond, bunny->GetTTSVoice());
+				QByteArray temperature = TTSManager::CreateNewSound("entre "+QString::number(iForecastLow) + " et "+QString::number(iForecastHigh) + " degrés", bunny->GetTTSVoice());
  				message += "MU "+prevision+"\nPL 3\nMW\n";
  				message += "MU "+meteo+"\nPL 3\nMW\n";
  				message += "MU "+temperature+"\nPL 3\nMW\n";

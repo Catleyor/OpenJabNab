@@ -27,11 +27,6 @@ PluginTV::~PluginTV()
 
 bool PluginTV::Init()
 {
-	QByteArray ceSoir = TTSManager::CreateNewSound("Programme télé de ce soir", "claire");
-	if(ceSoir.isNull())
-		return false;
-
-	ceSoirMessage = "MU " + ceSoir + "\nPL 3\nMW\n";
 	return true;
 }
 
@@ -158,7 +153,7 @@ void PluginTV_Worker::run()
 
 	QString currentTag;
 	QString chaine;
-	QByteArray message = plugin->ceSoirMessage;
+	QByteArray message;
 	while (!xml.atEnd())
 	{
 		xml.readNext();
@@ -177,9 +172,10 @@ void PluginTV_Worker::run()
 					if(chaine != rx.cap(4))
 					{
 						// LogDebug(rx.cap(4) +" : "+rx.cap(3));
-						QByteArray file1 = TTSManager::CreateNewSound(rx.cap(4).trimmed(), "claire");
-						QByteArray file2 = TTSManager::CreateNewSound(rx.cap(3).trimmed(), "julie");
-						message += "MU " + file1 + "\nPL 3\nMW\nMU " + file2 + "\nMW\n";
+						QByteArray ceSoir = TTSManager::CreateNewSound("Programme télé de ce soir", bunny->GetTTSVoice());
+						QByteArray file1 = TTSManager::CreateNewSound(rx.cap(4).trimmed(), bunny->GetTTSVoice());
+						QByteArray file2 = TTSManager::CreateNewSound(rx.cap(3).trimmed(), bunny->GetTTSVoice());
+						message =  "MU " + ceSoir + "\nPL 3\nMW\nMU " + file1 + "\nPL 3\nMW\nMU " + file2 + "\nMW\n";
 					}
 				}
 			}
