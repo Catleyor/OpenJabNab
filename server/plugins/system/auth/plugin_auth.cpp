@@ -133,7 +133,7 @@ bool PluginAuth::DoAuth(XmppHandler * xmpp, QByteArray const& data, Bunny ** pBu
 							return true;
 						}
 
-						LogError("Authentication failure for bunny");
+						LogError(QString("Authentication failure for bunny: %1").arg(QString(username)));
 						// Bad password, send failure and restart auth
 						answer.append("<failure xmlns='urn:ietf:params:xml:ns:xmpp-sasl'><not-authorized/></failure>");
 						xmpp->currentAuthStep = 0;
