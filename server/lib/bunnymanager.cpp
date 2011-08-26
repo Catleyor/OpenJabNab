@@ -143,6 +143,7 @@ void BunnyManager::DeleteBunny(QByteArray const& ID) {
 	Bunny *b = GetBunny(ID);
 	if(b != NULL) {
 		LogInfo(QString("Deleted Bunny: %1").arg(QString(b->GetID())));
+		b->Disconnect();
 		listOfBunnies.remove(QByteArray::fromHex(b->GetID()));
 		QFile bunnyFile(bunniesDir.absoluteFilePath(QString("%1.dat").arg(QString(b->GetID()))));
 		delete b;

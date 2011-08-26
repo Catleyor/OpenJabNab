@@ -72,6 +72,7 @@ public:
 	void PluginUnloaded(PluginInterface *);
 
 	 QString GetTTSVoice(void) const;
+	 void Disconnect(void);
 
 	// API
 	static void InitApiCalls();

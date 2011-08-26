@@ -644,6 +644,14 @@ bool Bunny::OnRFID(QByteArray const& tag)
 	return false;
 }
 
+void Bunny::Disconnect(void) {
+	if(xmppHandler)
+	{
+		xmppHandler->Disconnect();
+		xmppHandler = 0;
+	}
+}
+
 /*******/
 /* API */
 /*******/
@@ -848,12 +856,7 @@ API_CALL(Bunny::Api_Disconnect)
 	Q_UNUSED(account);
 	Q_UNUSED(hRequest);
 
-	if(xmppHandler)
-	{
-		xmppHandler->Disconnect();
-		xmppHandler = 0;
-	}
-
+	Disconnect();
 	return new ApiManager::ApiOk("Connexion closed");
 }
 
