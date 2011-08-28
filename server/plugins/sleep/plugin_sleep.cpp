@@ -29,7 +29,7 @@ void PluginSleep::OnBunnyDisconnect(Bunny * b)
 }
 
 bool PluginSleep::OnRFID(Bunny * b, QByteArray const& tag) {
-	if(tag != b->GetPluginSetting(GetName(), "RFID", QString()).toString())
+	if(tag.toHex() == b->GetPluginSetting(GetName(), "RFID", QString()).toString())
 	{
 		b->SendPacket(SleepPacket(SleepPacket::Sleep));
 		return true;
