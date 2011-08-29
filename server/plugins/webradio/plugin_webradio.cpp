@@ -122,9 +122,6 @@ PLUGIN_BUNNY_API_CALL(PluginWebradio::Api_AddRFID)
 {
 	Q_UNUSED(account);
 
-	if(!bunny->IsConnected())
-		return new ApiManager::ApiError(QString("Bunny '%1' is not connected").arg(hRequest.GetArg("to")));
-
 	bunny->SetPluginSetting(GetName(), QString("RFIDPlay/%1").arg(hRequest.GetArg("tag")), hRequest.GetArg("name"));
 
 	return new ApiManager::ApiOk(QString("Add '%1' for RFID '%2', bunny '%3'").arg(hRequest.GetArg("name"), hRequest.GetArg("tag"), QString(bunny->GetID())));
@@ -134,9 +131,6 @@ PLUGIN_BUNNY_API_CALL(PluginWebradio::Api_RemoveRFID)
 {
 	Q_UNUSED(account);
 
-	if(!bunny->IsConnected())
-		return new ApiManager::ApiError(QString("Bunny '%1' is not connected").arg(hRequest.GetArg("to")));
-
 	bunny->RemovePluginSetting(GetName(), QString("RFIDPlay/%1").arg(hRequest.GetArg("tag")));
 
 	return new ApiManager::ApiOk(QString("Remove RFID '%2' for bunny '%3'").arg(hRequest.GetArg("tag"), QString(bunny->GetID())));
@@ -145,9 +139,6 @@ PLUGIN_BUNNY_API_CALL(PluginWebradio::Api_RemoveRFID)
 PLUGIN_BUNNY_API_CALL(PluginWebradio::Api_AddPreset)
 {
 	Q_UNUSED(account);
-
-	if(!bunny->IsConnected())
-		return new ApiManager::ApiError(QString("Bunny '%1' is not connected").arg(hRequest.GetArg("to")));
 
 	QMap<QString, QVariant> list = bunny->GetPluginSetting(GetName(), "Presets", QMap<QString, QVariant>()).toMap();
 	list.insert(hRequest.GetArg("name"), hRequest.GetArg("url"));
@@ -160,9 +151,6 @@ PLUGIN_BUNNY_API_CALL(PluginWebradio::Api_RemovePreset)
 {
 	Q_UNUSED(account);
 
-	if(!bunny->IsConnected())
-		return new ApiManager::ApiError(QString("Bunny '%1' is not connected").arg(hRequest.GetArg("to")));
-
 	QMap<QString, QVariant> list = bunny->GetPluginSetting(GetName(), "Presets", QMap<QString, QVariant>()).toMap();
 	list.remove(hRequest.GetArg("name"));
 	bunny->SetPluginSetting(GetName(), "Presets", list);
@@ -173,9 +161,7 @@ PLUGIN_BUNNY_API_CALL(PluginWebradio::Api_RemovePreset)
 PLUGIN_BUNNY_API_CALL(PluginWebradio::Api_GetDefault)
 {
 	Q_UNUSED(account);
-
-	if(!bunny->IsConnected())
-		return new ApiManager::ApiError(QString("Bunny '%1' is not connected").arg(hRequest.GetArg("to")));
+    Q_UNUSED(hRequest);
 
 	QString name = bunny->GetPluginSetting(GetName(), "DefaultWebradio", QString()).toString();
 	return new ApiManager::ApiString(name);
@@ -184,9 +170,6 @@ PLUGIN_BUNNY_API_CALL(PluginWebradio::Api_GetDefault)
 PLUGIN_BUNNY_API_CALL(PluginWebradio::Api_SetDefault)
 {
 	Q_UNUSED(account);
-
-	if(!bunny->IsConnected())
-		return new ApiManager::ApiError(QString("Bunny '%1' is not connected").arg(hRequest.GetArg("to")));
 
 	bunny->SetPluginSetting(GetName(), "DefaultWebradio", hRequest.GetArg("name"));
 	return new ApiManager::ApiOk(QString("Define '%1' preset webradio as default for bunny '%2'").arg(hRequest.GetArg("name"), QString(bunny->GetID())));
@@ -220,9 +203,6 @@ PLUGIN_BUNNY_API_CALL(PluginWebradio::Api_AddWebcast)
 {
     Q_UNUSED(account);
 
-    if(!bunny->IsConnected())
-        return new ApiManager::ApiError(QString("Bunny '%1' is not connected").arg(hRequest.GetArg("to")));
-
     QString hTime = hRequest.GetArg("time");
 	if(!bunny->GetPluginSetting(GetName(), "Webcasts", QMap<QString, QVariant>()).toMap().contains(hTime))
     {
@@ -238,9 +218,6 @@ PLUGIN_BUNNY_API_CALL(PluginWebradio::Api_AddWebcast)
 PLUGIN_BUNNY_API_CALL(PluginWebradio::Api_RemoveWebcast)
 {
     Q_UNUSED(account);
-
-    if(!bunny->IsConnected())
-        return new ApiManager::ApiError(QString("Bunny '%1' is not connected").arg(QString(bunny->GetID())));
 
 	QMap<QString, QVariant> list = bunny->GetPluginSetting(GetName(), "Webcasts", QMap<QString, QVariant>()).toMap();
     QString time = hRequest.GetArg("time");
@@ -261,10 +238,8 @@ PLUGIN_BUNNY_API_CALL(PluginWebradio::Api_RemoveWebcast)
 PLUGIN_BUNNY_API_CALL(PluginWebradio::Api_ListWebcast)
 {
 	Q_UNUSED(account);
-
-	if(!bunny->IsConnected())
-		return new ApiManager::ApiError(QString("Bunny '%1' is not connected").arg(hRequest.GetArg("to")));
-
+    Q_UNUSED(hRequest);
+    
 	QMap<QString, QVariant> list = bunny->GetPluginSetting(GetName(), "Webcasts", QMap<QString, QVariant>()).toMap();
 
 	return new ApiManager::ApiMappedList(list);
@@ -273,9 +248,7 @@ PLUGIN_BUNNY_API_CALL(PluginWebradio::Api_ListWebcast)
 PLUGIN_BUNNY_API_CALL(PluginWebradio::Api_ListPreset)
 {
 	Q_UNUSED(account);
-
-	if(!bunny->IsConnected())
-		return new ApiManager::ApiError(QString("Bunny '%1' is not connected").arg(hRequest.GetArg("to")));
+    Q_UNUSED(hRequest);
 
 	QMap<QString, QVariant> list = bunny->GetPluginSetting(GetName(), "Presets", QMap<QString, QVariant>()).toMap();
 
