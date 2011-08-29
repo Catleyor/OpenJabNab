@@ -115,9 +115,11 @@ ApiManager::ApiAnswer * Bunny::ProcessVioletApiCall(HTTPRequest const& hRequest)
 								break;
 							case 13:
 								answer->AddXml("<message>COMMANDSENT</message><comment>You rabbit will change status</comment>");
+								SendPacket(SleepPacket(SleepPacket::Wake_Up));
 								break;
 							case 14:
 								answer->AddXml("<message>COMMANDSENT</message><comment>You rabbit will change status</comment>");
+								SendPacket(SleepPacket(SleepPacket::Sleep));
 								break;
 							default:
 								break;
