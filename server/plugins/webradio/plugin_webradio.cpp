@@ -179,8 +179,8 @@ PLUGIN_BUNNY_API_CALL(PluginWebradio::Api_Play)
 {
 	Q_UNUSED(account);
 
-	if(!bunny->IsConnected())
-		return new ApiManager::ApiError(QString("Bunny '%1' is not connected").arg(hRequest.GetArg("to")));
+	if(!bunny->IsIdle())
+		return new ApiManager::ApiError(QString("Bunny '%1' is not idle").arg(hRequest.GetArg("to")));
 
     if(streamPresetWebradio(bunny, hRequest.GetArg("name")))
     	return new ApiManager::ApiOk(QString("Now streaming '%1' on bunny '%2'").arg(hRequest.GetArg("name"), QString(bunny->GetID())));
@@ -191,8 +191,8 @@ PLUGIN_BUNNY_API_CALL(PluginWebradio::Api_PlayUrl)
 {
 	Q_UNUSED(account);
 
-	if(!bunny->IsConnected())
-		return new ApiManager::ApiError(QString("Bunny '%1' is not connected").arg(hRequest.GetArg("to")));
+	if(!bunny->IsIdle())
+		return new ApiManager::ApiError(QString("Bunny '%1' is not idle").arg(hRequest.GetArg("to")));
 
     if(streamWebradio(bunny, hRequest.GetArg("url")))
     	return new ApiManager::ApiOk(QString("Now streaming '%1' on bunny '%2'").arg(hRequest.GetArg("url"), QString(bunny->GetID())));
