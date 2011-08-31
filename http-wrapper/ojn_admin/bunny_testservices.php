@@ -1,4 +1,5 @@
 <?php
+require_once 'include/common.php';
 if(!empty($_POST)) {
 	if(isset($_POST['weathersel'])) {
 		$s = 1;
@@ -37,14 +38,22 @@ if(!empty($_POST)) {
 		$v = (int)$_POST['dissel'];
 	}
 	if(isset($s) && isset($v)) {
-		$retour = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/setambient/ambientPacket?service=".$s."&value=".$v."&".$ojnAPI->getToken());
+		$retour = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/setService?service=".$s."&value=".$v."&".$ojnAPI->getToken());
 		$_SESSION['message'] = isset($retour['ok']) ? $retour['ok'] : "Error : ".$retour['error'];
-		header("Location: bunny_plugin.php?p=setambient");
+		header("Location: bunny_testservices.php");
 	}
 }
+if(isset($_SESSION['message'])) {
+	if(strstr($_SESSION['message'],'Error : ')) {?>
+	<div class="error_msg">
+	<?php } else { ?>
+	<div class="ok_msg">
+	<?php }
+	echo $_SESSION['message']; ?>
+	</div>
+	<?php unset($_SESSION['message']);
+}
 ?>
-
-
 <fieldset>
 <legend>Ambient Packets</legend>
 <form method="post">
@@ -153,3 +162,10 @@ Disable
 <input type="submit" value="Send" />
 </form>
 </fieldset>
+<br />
+<fieldset style="text-align: center;">
+<strong><a href="bunny.php">Config page</a></strong>
+</fieldset>
+<?php
+require_once 'include/append.php';
+?>
