@@ -148,7 +148,7 @@ if(isset($_SESSION['message']) && empty($_GET)) {
 		<td width="15%"><?php	echo isset($cbunnies[$mac]) ? 'C': 'D&eacute;c' ?>onnect&eacute;</td>
 		<td width="15%"><?php echo $bOwners[$mac]; ?></td>
 		<td width="15%"><a href='bunny.php?b=<?php echo $mac; ?>'>Configurer</a>
-		<td width="15%"><a href='?RemoveBunny&serial=<?php echo $mac; ?>'>Supprimer</a>
+		<td width="15%"><a href='?removeB=<?php echo $mac; ?>'>Supprimer</a>
 	</tr>
 <?php } ?>
 </table>
