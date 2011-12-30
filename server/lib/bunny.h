@@ -105,6 +105,8 @@ private:
 	API_CALL(Api_ResetPassword);
 	API_CALL(Api_ResetOwner);
 	API_CALL(Api_Disconnect);
+        API_CALL(Api_setPublicVApi);
+        API_CALL(Api_getPublicVApi);
 	API_CALL(Api_enableVApi);
 	API_CALL(Api_disableVApi);
 	API_CALL(Api_getVApiStatus);
@@ -112,7 +114,8 @@ private:
 	API_CALL(Api_setVApiToken);
 	API_CALL(Api_getTTSVoice);
 	API_CALL(Api_setTTSVoice);
-
+	API_CALL(Api_getAllLast);
+	API_CALL(Api_getOneLast);
 
 	enum State state;
 

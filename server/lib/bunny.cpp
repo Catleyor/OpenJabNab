@@ -53,114 +53,114 @@ ApiManager::ApiAnswer * Bunny::ProcessVioletApiCall(HTTPRequest const& hRequest)
 	ApiManager::ApiViolet* answer = new ApiManager::ApiViolet();
 
 	if(hRequest.HasArg("sn") && hRequest.HasArg("token")) {
-		QString serial = hRequest.GetArg("sn");
-		QString token = hRequest.GetArg("token");
+  		QString serial = hRequest.GetArg("sn").toLower();
+	  	QString token = hRequest.GetArg("token");
 
 		if(GetGlobalSetting("VApiEnable",false).toBool()) {
-			if(GetGlobalSetting("VApiToken","").toString() == token && serial.toAscii()==GetID())
-			{
+			if((GetGlobalSetting("VApiToken","").toString() == token && serial.toAscii()==GetID()) || GetGlobalSetting("VApiPublic",false).toBool())
+       			{
 
-				if(hRequest.GetURI().startsWith("/ojn/FR/api_stream.jsp"))
-				{
-					if(hRequest.HasArg("urlList"))
-					{
+	        	        if(hRequest.GetURI().startsWith("/ojn/FR/api_stream.jsp"))
+		                {
+        		                if(hRequest.HasArg("urlList"))
+	                	        {
 						QByteArray message = ("ST " + hRequest.GetArg("urlList").split("|", QString::SkipEmptyParts).join("\nMW\nST ") + "\nMW\n").toAscii();
 						SendPacket(MessagePacket(message));
-						answer->AddMessage("WEBRADIOSENT", "Your webradio has been sent");
-					}
-					else
-					{
-						answer->AddMessage("NOCORRECTPARAMETERS", "Please check urlList parameter !");
-					}
-				}
-				else
-				{
-					AmbientPacket p;
-					if(hRequest.HasArg("action")) // TODO: send good values
-					{
-						switch(hRequest.GetArg("action").toInt())
-						{
-							case 2:
-								answer->AddXml("<listfriend nb=\"0\"/>");
-								break;
-							case 3:
-								answer->AddXml("<listreceivedmsg nb=\"0\"/>");
-								break;
-							case 4:
-								answer->AddXml("<timezone>(GMT + 01:00) Bruxelles, Copenhague, Madrid, Paris</timezone>");
-								break;
-							case 6:
-								answer->AddXml("<blacklist nb=\"0\"/>");
-								break;
-							case 7:
-								if(IsSleeping())
-									answer->AddXml("<rabbitSleep>YES</rabbitSleep>");
-								else
-									answer->AddXml("<rabbitSleep>NO</rabbitSleep>");
-								break;
-							case 8:
-								answer->AddXml("<rabbitVersion>V2</rabbitVersion>");
-								break;
-							case 9:
-								answer->AddXml("<voiceListTTS nb=\"2\"/><voice lang=\"fr\" command=\"FR-Anastasie\"/><voice lang=\"de\" command=\"DE-Otto\"/>");
-								break;
-							case 10:
-								answer->AddXml("<rabbitName>" + GetBunnyName() + "</rabbitName>");
-								break;
-							case 11:
-								answer->AddXml("<langListUser nb=\"4\"/><myLang lang=\"fr\"/><myLang lang=\"us\"/><myLang lang=\"uk\"/><myLang lang=\"de\"/>");
-								break;
-							case 12:
-								answer->AddXml("<message>LINKPREVIEW</message><comment>XXXX</comment>");
-								break;
-							case 13:
-								answer->AddXml("<message>COMMANDSENT</message><comment>You rabbit will change status</comment>");
+	                	                answer->AddMessage("WEBRADIOSENT", "Your webradio has been sent");
+        		                }
+	        	                else
+                        		{
+                	        	        answer->AddMessage("NOCORRECTPARAMETERS", "Please check urlList parameter !");
+	        	                }
+		                }
+        		        else
+	                	{
+	                		AmbientPacket p;
+        	        	        if(hRequest.HasArg("action")) // TODO: send good values
+        		                {
+	                	                switch(hRequest.GetArg("action").toInt())
+	                        	        {
+        	        	                        case 2:
+        		                                        answer->AddXml("<listfriend nb=\"0\"/>");
+	                	                                break;
+                                	        	case 3:
+                                		                answer->AddXml("<listreceivedmsg nb=\"0\"/>");
+                        	                	        break;
+	                	                        case 4:
+        		                                        answer->AddXml("<timezone>(GMT + 01:00) Bruxelles, Copenhague, Madrid, Paris</timezone>");
+	        	                                        break;
+                        		                case 6:
+                	        	                        answer->AddXml("<blacklist nb=\"0\"/>");
+        	                        	                break;
+	                                        	case 7:
+	                        	                        if(IsSleeping())
+        	        	                                        answer->AddXml("<rabbitSleep>YES</rabbitSleep>");
+        		                                        else
+	                	                                        answer->AddXml("<rabbitSleep>NO</rabbitSleep>");
+                        		                        break;
+                	                	        case 8:
+        	                                	        answer->AddXml("<rabbitVersion>V2</rabbitVersion>");
+		                                               	break;
+        	                                	case 9:
+                	                	                answer->AddXml("<voiceListTTS nb=\"2\"/><voice lang=\"fr\" command=\"FR-Anastasie\"/><voice lang=\"de\" command=\"DE-Otto\"/>");
+                        		                        break;
+                	        	                case 10:
+        	                        	                answer->AddXml("<rabbitName>" + GetBunnyName() + "</rabbitName>");
+	                                        	        break;
+	                                        	case 11:
+        	                        	                answer->AddXml("<langListUser nb=\"4\"/><myLang lang=\"fr\"/><myLang lang=\"us\"/><myLang lang=\"uk\"/><myLang lang=\"de\"/>");
+                	        	                        break;
+	                	                        case 12:
+        		                                        answer->AddXml("<message>LINKPREVIEW</message><comment>XXXX</comment>");
+	        	                                        break;
+                        	        	        case 13:
+                        		                        answer->AddXml("<message>COMMANDSENT</message><comment>You rabbit will change status</comment>");
 								SendPacket(SleepPacket(SleepPacket::Wake_Up));
-								break;
-							case 14:
-								answer->AddXml("<message>COMMANDSENT</message><comment>You rabbit will change status</comment>");
+        	                                	        break;
+		                                        case 14:
+        	                        	                answer->AddXml("<message>COMMANDSENT</message><comment>You rabbit will change status</comment>");
 								SendPacket(SleepPacket(SleepPacket::Sleep));
-								break;
-							default:
-								break;
-						}
-					}
-					else
-					{
-						if(hRequest.HasArg("idmessage"))
-						{
-							answer->AddMessage("MESSAGESENT", "Your message has been sent");
-						}
-						if(hRequest.HasArg("posleft") || hRequest.HasArg("posright"))
-						{
-							int left = 0;
-							int right = 0;
+                		                                break;
+        	                	                default:
+		                                                break;
+        	                        	}
+               			        }
+	        	                else
+               			        {
+		                                if(hRequest.HasArg("idmessage"))
+       	                        		{
+               			                        answer->AddMessage("MESSAGESENT", "Your message has been sent");
+	        	                        }
+                               			if(hRequest.HasArg("posleft") || hRequest.HasArg("posright"))
+               		        	        {
+	 	                                	int left = 0;
+                 	        			int right = 0;
 							if(hRequest.HasArg("posleft")) left = hRequest.GetArg("posleft").toInt();
-							if(hRequest.HasArg("posright")) right = hRequest.GetArg("posright").toInt();
-							if(left >= 0 && left <= 16 && right >= 0 && right <= 16)
-							{
-								answer->AddMessage("EARPOSITIONSENT", "Your ears command has been sent");
-								p.SetEarsPosition(left, right);
-							}
-							else
-							{
-								answer->AddMessage("EARPOSITIONNOTSENT", "Your ears command could not be sent");
-							}
-						}
-						if(hRequest.HasArg("tts"))
-						{
-							SendPacket(MessagePacket("MU "+TTSManager::CreateNewSound(hRequest.GetArg("tts"), hRequest.HasArg("voice") ? hRequest.GetArg("voice") : GetTTSVoice())+"\nPL 3\nMW\n"));
-							answer->AddMessage("TTSSENT", "Your text has been sent");
-						}
-						if(hRequest.HasArg("ears"))
-						{
-							answer->AddEarPosition(0, 0); // TODO: send real positions
-						}
-						if(hRequest.HasArg("chor"))
-						{
+	                        	                if(hRequest.HasArg("posright")) right = hRequest.GetArg("posright").toInt();
+               		                	        if(left >= 0 && left <= 16 && right >= 0 && right <= 16)
+	                                        	{
+	                                			answer->AddMessage("EARPOSITIONSENT", "Your ears command has been sent");
+	        	        		                p.SetEarsPosition(left, right);
+		                                        }
+                       	        		        else
+               			                        {
+	                        	                        answer->AddMessage("EARPOSITIONNOTSENT", "Your ears command could not be sent");
+                               			        }
+                		                }
+		                                if(hRequest.HasArg("tts"))
+		                                {
+							SendPacket(MessagePacket("MU "+TTSManager::CreateNewSound(hRequest.GetArg("tts"), "claire")+"\nPL 3\nMW\n"));
+                		                        answer->AddMessage("TTSSENT", "Your text has been sent");
+		                                }
+                		                if(hRequest.HasArg("ears"))
+		                                {
+                		                        answer->AddEarPosition(0, 0); // TODO: send real positions
+		                                }
+                                		if(hRequest.HasArg("chor"))
+                		                {
 							Choregraphy c;
-							if(c.Parse(hRequest.GetArg("chor"))) //TODO: Check for good chor
-							{
+                                		        if(c.Parse(hRequest.GetArg("chor"))) //TODO: Check for good chor
+                		                        {
 								QDir chorFolder = QDir(GlobalSettings::GetString("Config/RealHttpRoot"));
 								if (!chorFolder.cd("chor"))
 								{
@@ -187,26 +187,31 @@ ApiManager::ApiAnswer * Bunny::ProcessVioletApiCall(HTTPRequest const& hRequest)
 									SendPacket(MessagePacket(("CH broadcast/ojn_local/chor/" + fileName + "\n").toAscii()));
 									answer->AddMessage("CHORSENT", "Your chor has been sent");
 								}
-							}
-							else
-							{
-								answer->AddMessage("CHORNOTSENT", "Your chor could not be sent (bad chor)");
-							}
-						}
-					}
+		                                        }
+                                		        else
+                		                        {
+		                                                answer->AddMessage("CHORNOTSENT", "Your chor could not be sent (bad chor)");
+                                        		}
+                                		}
+                        		}
 					if(p.GetServices().count() > 0)
-						SendPacket(p);
-				}
-			}
-			else
-			{
-				answer->AddMessage("NOGOODTOKENORSERIAL", "Your token or serial number are not correct !");
-			}
-		} else
-			 answer->AddMessage("APIDISABLED", "API is disabled for this bunny");
-	} else
+	        	        		SendPacket(p);
+                		}
+		        }
+		        else
+		        {
+		                answer->AddMessage("NOGOODTOKENORSERIAL", "Your token or serial number are not correct !");
+        		}
+		}
+		else
+		{
+			answer->AddMessage("APIDISABLED", "API is disabled for this bunny");
+		}
+	}
+	else
+	{
 		answer->AddMessage("APIDISABLED", "Missing serial or token");
-
+        }
 	return answer;
 }
 
@@ -680,14 +685,17 @@ void Bunny::InitApiCalls()
 
 	DECLARE_API_CALL("disconnect()", &Bunny::Api_Disconnect);
 
+	DECLARE_API_CALL("setPublicVAPI(public)", &Bunny::Api_setPublicVApi);
+	DECLARE_API_CALL("getPublicVAPI()", &Bunny::Api_getPublicVApi);
 	DECLARE_API_CALL("enableVAPI()", &Bunny::Api_enableVApi);
 	DECLARE_API_CALL("disableVAPI()", &Bunny::Api_disableVApi);
 	DECLARE_API_CALL("getVAPIStatus()", &Bunny::Api_getVApiStatus);
 	DECLARE_API_CALL("getVAPIToken()", &Bunny::Api_getVApiToken);
 	DECLARE_API_CALL("setVAPIToken(tk)", &Bunny::Api_setVApiToken);
-
 	DECLARE_API_CALL("getTTSVoice()", &Bunny::Api_getTTSVoice);
 	DECLARE_API_CALL("setTTSVoice(voice)", &Bunny::Api_setTTSVoice);
+	DECLARE_API_CALL("getlast(param)", &Bunny::Api_getOneLast);
+	DECLARE_API_CALL("getlasts()", &Bunny::Api_getAllLast);
 }
 
 API_CALL(Bunny::Api_AddPlugin)
@@ -862,6 +870,23 @@ API_CALL(Bunny::Api_Disconnect)
 	return new ApiManager::ApiOk("Connexion closed");
 }
 
+API_CALL(Bunny::Api_setPublicVApi)
+{
+        Q_UNUSED(account);
+        bool p = (bool)(hRequest.GetArg("public").toInt());
+        QString pub = p ? "public" : "private";
+        SetGlobalSetting("VApiPublic",p);
+        return new ApiManager::ApiOk(QString("Bunny is now %1 for VioletAPI").arg(pub));
+}
+
+API_CALL(Bunny::Api_getPublicVApi)
+{
+        Q_UNUSED(account);
+        Q_UNUSED(hRequest);
+        QString pub = GetGlobalSetting("VApiPublic",false).toBool() ? "public" : "private";
+        return new ApiManager::ApiString(pub);
+}
+
 API_CALL(Bunny::Api_enableVApi)
 {
 	Q_UNUSED(account);
@@ -889,7 +914,7 @@ API_CALL(Bunny::Api_getVApiStatus)
 {
 	Q_UNUSED(account);
 	Q_UNUSED(hRequest);
-	return new ApiManager::ApiString(GetGlobalSetting("VApiEnable", "false").toString());
+	return new ApiManager::ApiString(GetGlobalSetting("VApiEnable", false).toBool() ? "enabled" : "disabled");
 }
 
 API_CALL(Bunny::Api_getVApiToken)
@@ -922,4 +947,34 @@ API_CALL(Bunny::Api_setTTSVoice)
 	QString voice = hRequest.GetArg("voice");
 	SetGlobalSetting("TTSVoice",voice.toAscii());
 	return new ApiManager::ApiOk(QString("TTS Voice set to '%1'").arg(voice));
+}
+
+API_CALL(Bunny::Api_getOneLast)
+{
+	if(!account.IsAdmin())
+		return new ApiManager::ApiError("Access denied");
+
+	QString hParam = hRequest.GetArg("param");
+	if(hParam == "Last JabberConnection" || hParam == "LastIP" || hParam == "LastRecord" || hParam == "LastLocate" || hParam == "LastLocateString" || hParam == "LastCron")
+	{
+		return new ApiManager::ApiString(GetGlobalSetting(hParam, QString("")).toString());
+	}
+	return new ApiManager::ApiError(QString("'%1' is not a good parameter").arg(hParam));
+}
+
+API_CALL(Bunny::Api_getAllLast)
+{
+	Q_UNUSED(hRequest);
+	if(!account.IsAdmin())
+		return new ApiManager::ApiError("Access denied");
+
+	QStringList params;
+	params << "Last JabberConnection" << "LastIP" << "LastRecord" << "LastLocate" << "LastLocateString" << "LastCron";
+	QMap<QString, QVariant> answer = QMap<QString, QVariant>();
+	foreach(QString param, params)
+	{
+		answer.insert(param, GetGlobalSetting(param, QString("")));
+	}
+
+	return new ApiManager::ApiMappedList(answer);
 }

@@ -50,8 +50,8 @@ void PluginTV::getTVPage(Bunny * b)
 	QHttp* http = new QHttp(this);
 	http->setProperty("BunnyID", b->GetID());
 	connect(http, SIGNAL(done(bool)), this, SLOT(analyseXml()));
-	http->setHost("www.programme-tv.com");
-	http->get("/rss.xml");
+	http->setHost("programme-tv.orange.fr");
+	http->get("/rss/fluxRssProgrammeSoiree.xml");
 }
 
 void PluginTV::analyseXml()
@@ -80,6 +80,12 @@ void PluginTV::OnBunnyConnect(Bunny * b)
 	{
 		Cron::RegisterDaily(this, QTime::fromString(webcast, "hh:mm"), b);
 	}
+	QStringList channels = b->GetPluginSetting(GetName(), "Channels", QStringList()).toStringList();
+	if(channels.count() == 0)
+	{
+		channels << "TF 1" << "France 2" << "France 3" << "Arte" << "M6";
+		b->SetPluginSetting(GetName(), "Channels", channels);
+	}
 }
 
 void PluginTV::OnBunnyDisconnect(Bunny * b)
@@ -95,6 +101,9 @@ void PluginTV::InitApiCalls()
 {
 	DECLARE_PLUGIN_BUNNY_API_CALL("addwebcast(time)", PluginTV, Api_AddWebcast);
 	DECLARE_PLUGIN_BUNNY_API_CALL("removewebcast(time)", PluginTV, Api_RemoveWebcast);
+	DECLARE_PLUGIN_BUNNY_API_CALL("listwebcast()", PluginTV, Api_ListWebcast);
+	DECLARE_PLUGIN_BUNNY_API_CALL("setchannel(list)", PluginTV, Api_SetChannel);
+	DECLARE_PLUGIN_BUNNY_API_CALL("listchannel()", PluginTV, Api_ListChannel);
 }
 
 PLUGIN_BUNNY_API_CALL(PluginTV::Api_AddWebcast)
@@ -140,6 +149,32 @@ PLUGIN_BUNNY_API_CALL(PluginTV::Api_RemoveWebcast)
 	return new ApiManager::ApiError(QString("No webcast at '%1' for bunny '%2'").arg(hRequest.GetArg("time"), QString(bunny->GetID())));
 }
 
+PLUGIN_BUNNY_API_CALL(PluginTV::Api_ListWebcast)
+{
+	Q_UNUSED(account);
+	Q_UNUSED(hRequest);
+	return new ApiManager::ApiList(bunny->GetPluginSetting(GetName(), "Webcast/List", QStringList()).toStringList());
+}
+
+PLUGIN_BUNNY_API_CALL(PluginTV::Api_ListChannel)
+{
+	Q_UNUSED(account);
+	Q_UNUSED(hRequest);
+	return new ApiManager::ApiList(bunny->GetPluginSetting(GetName(), "Channels", QStringList()).toStringList());
+}
+
+PLUGIN_BUNNY_API_CALL(PluginTV::Api_SetChannel)
+{
+	Q_UNUSED(account);
+
+	if(!bunny->IsConnected())
+		return new ApiManager::ApiError(QString("Bunny '%1' is not connected").arg(hRequest.GetArg("to")));
+
+	QStringList hList = hRequest.GetArg("list").split(",");
+	bunny->SetPluginSetting(GetName(), "Channels", hList);
+	return new ApiManager::ApiOk(QString("Channels setup is OK"));
+}
+
 /* WORKER THREAD */
 PluginTV_Worker::PluginTV_Worker(PluginTV * p, Bunny * bu, QByteArray b):plugin(p),bunny(bu),buffer(b.replace("&amp;", "and"))
 {
@@ -153,7 +188,8 @@ void PluginTV_Worker::run()
 
 	QString currentTag;
 	QString chaine;
-	QByteArray message;
+	QByteArray message = plugin->ceSoirMessage;
+	QStringList liste = bunny->GetPluginSetting(plugin->GetName(), "Channels", QStringList()).toStringList();
 	while (!xml.atEnd())
 	{
 		xml.readNext();
@@ -166,16 +202,15 @@ void PluginTV_Worker::run()
 			if (currentTag == "title")
 			{
 				QString title = xml.text().toString();
-				QRegExp rx("(\\d\\d):(\\d\\d) : (.*) \\((.*)\\)");
+				QRegExp rx("(.*) - (\\d\\d:\\d\\d) - (.*)");
 				if(rx.indexIn(title) != -1)
 				{
-					if(chaine != rx.cap(4))
+					if(chaine != rx.cap(1) && liste.contains(rx.cap(1)))
 					{
 						// LogDebug(rx.cap(4) +" : "+rx.cap(3));
-						QByteArray ceSoir = TTSManager::CreateNewSound("Programme télé de ce soir", bunny->GetTTSVoice());
-						QByteArray file1 = TTSManager::CreateNewSound(rx.cap(4).trimmed(), bunny->GetTTSVoice());
-						QByteArray file2 = TTSManager::CreateNewSound(rx.cap(3).trimmed(), bunny->GetTTSVoice());
-						message =  "MU " + ceSoir + "\nPL 3\nMW\nMU " + file1 + "\nPL 3\nMW\nMU " + file2 + "\nMW\n";
+						chaine = rx.cap(1);
+						QByteArray file = TTSManager::CreateNewSound(rx.cap(1).trimmed() + ", " + rx.cap(3).trimmed(), "claire");
+						message += "MU " + file + "\nPL 3\nMW\n";
 					}
 				}
 			}

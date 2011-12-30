@@ -221,11 +221,14 @@ void AccountManager::InitApiCalls()
 	DECLARE_API_CALL("auth(login,pass)", &AccountManager::Api_Auth);
 	DECLARE_API_CALL("changePassword(login,pass)", &AccountManager::Api_ChangePasswd);
 	DECLARE_API_CALL("registerNewAccount(login,username,pass)", &AccountManager::Api_RegisterNewAccount);
+	DECLARE_API_CALL("removeAccount(login)", &AccountManager::Api_RemoveAccount);
 	DECLARE_API_CALL("addBunny(login,bunnyid)", &AccountManager::Api_AddBunny);
 	DECLARE_API_CALL("removeBunny(login,bunnyid)", &AccountManager::Api_RemoveBunny);
 	DECLARE_API_CALL("removeZtamp(login,zid)", &AccountManager::Api_RemoveZtamp);
 	DECLARE_API_CALL("settoken(tk)", &AccountManager::Api_SetToken);
 	DECLARE_API_CALL("setadmin(user)", &AccountManager::Api_SetAdmin);
+	DECLARE_API_CALL("setlanguage(login,lng)", &AccountManager::Api_SetLanguage);
+	DECLARE_API_CALL("getlanguage(login)", &AccountManager::Api_GetLanguage);
 	DECLARE_API_CALL("infos(user)", &AccountManager::Api_GetUserInfos);
 	DECLARE_API_CALL("GetUserlist()", &AccountManager::Api_GetUserlist);
 	DECLARE_API_CALL("GetConnectedUsers()", &AccountManager::Api_GetConnectedUsers);
@@ -282,6 +285,25 @@ API_CALL(AccountManager::Api_RegisterNewAccount)
 	}
 	SaveAccounts();
 	return new ApiManager::ApiOk(QString("New account created : %1").arg(hRequest.GetArg("login")));
+}
+
+API_CALL(AccountManager::Api_RemoveAccount)
+{
+	if(!account.IsAdmin())
+		return new ApiManager::ApiError("Access denied");
+
+	QString login = hRequest.GetArg("login");
+	if(!listOfAccountsByName.contains(login))
+		return new ApiManager::ApiError(QString("Account '%1' does not exist").arg(login));
+
+	Account * a = GetAccountByLogin(login.toAscii());
+	int indexOfAccount = listOfAccounts.indexOf(a);
+	listOfAccounts.removeAt(indexOfAccount);
+	listOfAccountsByName.remove(a->GetLogin());
+	QFile accountFile(accountsDir.absoluteFilePath(QString("%1.dat").arg(a->GetLogin())));
+	if(accountFile.remove())
+		return new ApiManager::ApiOk(QString("Account %1 removed").arg(login));
+	return new ApiManager::ApiError(QString("Error when removing account %1").arg(login));
 }
 
 API_CALL(AccountManager::Api_AddBunny)
@@ -379,6 +401,7 @@ API_CALL(AccountManager::Api_GetUserInfos)
 	QMap<QString, QVariant> list;
 	list.insert("login",ac->GetLogin());
 	list.insert("username",ac->GetUsername());
+	list.insert("language",ac->GetLanguage());
 	list.insert("isValid",listOfTokens.contains(ac->GetToken()));
 	list.insert("token",QString(ac->GetToken()));
 	list.insert("isAdmin",ac->IsAdmin());
@@ -439,12 +462,36 @@ API_CALL(AccountManager::Api_SetAdmin)
 	return new ApiManager::ApiOk(QString("user '%1' is now admin").arg(login));
 }
 
-API_CALL(AccountManager::Api_RemoveAccount) {
-	if(!account.IsAdmin())
-		return new ApiManager::ApiError("Access denied");
-	QString login = hRequest.GetArg("user");
-	if(login== account.GetLogin())
-		return new ApiManager::ApiError("You can't delete your account");
-	DeleteAccount(login.toAscii());
-	return new ApiManager::ApiOk(QString("Account '%1' deleted.").arg(login));
+API_CALL(AccountManager::Api_SetLanguage)
+{
+	Q_UNUSED(account);
+
+	QString login = hRequest.GetArg("login");
+	QString language = hRequest.GetArg("lng");
+
+	if(login == "")
+		return new ApiManager::ApiError("No account specified");
+
+	/* Get User */
+	Account *ac = listOfAccountsByName.value(login.toAscii());
+	if(ac == NULL)
+		return new ApiManager::ApiError("Account not found.");
+	ac->SetLanguage(language);
+	return new ApiManager::ApiOk(QString("Language is now '%1' for user '%2'").arg(language, login));
+}
+
+API_CALL(AccountManager::Api_GetLanguage)
+{
+	Q_UNUSED(account);
+
+	QString login = hRequest.GetArg("login");
+
+	if(login == "")
+		return new ApiManager::ApiError("No account specified");
+
+	/* Get User */
+	Account *ac = listOfAccountsByName.value(login.toAscii());
+	if(ac == NULL)
+		return new ApiManager::ApiError("Account not found.");
+	return new ApiManager::ApiString(ac->GetLanguage());
 }

@@ -22,6 +22,11 @@ if(!empty($_POST['bmac_rm'])) {
     $_SESSION['message'] = (isset($r['ok']) ? $r['ok'] : "Error : ".$r['error']);
 }
 
+if(!empty($_POST['lng'])) {
+    $r = $ojnAPI->getApiString('accounts/setlanguage?login='.urlencode($_SESSION['login']).'&lng='.$_POST['lng'].'&'.$ojnAPI->getToken());
+    $_SESSION['message'] = (isset($r['ok']) ? $r['ok'] : "Error : ".$r['error']);
+}
+
 if(!empty($_POST['zid_rm'])) {
     $r = $ojnAPI->getApiString('accounts/removeZtamp?login='.urlencode($_SESSION['login']).'&zid='.$_POST['zid_rm'].'&'.$ojnAPI->getToken());
     $_SESSION['message'] = (isset($r['ok']) ? $r['ok'] : "Error : ".$r['error']);
@@ -87,6 +92,20 @@ if(isset($_SESSION['message']) && empty($r)) {
     <?php } ?>
 </select>
 <input type="submit" value="Remove" />
+</form>
+</fieldset>
+<?php 
+$lng = $ojnAPI->getApiString("accounts/getlanguage?login=".$_SESSION['login']."&".$ojnAPI->getToken());
+$lng = $lng['value'];
+?>
+<fieldset>
+<legend>Language</legend>
+<form method="post">
+<select name="lng">
+<option value="en"<?php if($lng == 'en') { ?> selected="selected"<?php } ?>>English</option>
+<option value="fr"<?php if($lng == 'fr') { ?> selected="selected"<?php } ?>>French</option>
+</select><br />
+<input type="submit" value="Apply" />
 </form>
 </fieldset>
 <fieldset>

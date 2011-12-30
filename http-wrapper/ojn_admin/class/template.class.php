@@ -14,6 +14,12 @@ class ojnTemplate {
 		$this->UInfos = $v;
 	}
 
+	private function translate($page)
+	{
+		global $translations;
+		return preg_replace(array_map('toRegex', array_keys($translations)), $translations, $page);
+	}
+
 	public function display($buffer) {
 		$template = file_get_contents(ROOT_SITE.'class/template.tpl.php');
 		$Stats = $this->Api->getStats(false);
@@ -42,6 +48,11 @@ class ojnTemplate {
 			);
 
 		$template = preg_replace($pattern, $replace, $template);
+		if(preg_match("|<body>(.*)</body>|s", $template, $match))
+		{
+			$body = $this->translate($match[1]);
+			$template = preg_replace("|<body>(.*)</body>|s", $body, $template);
+		}
 		return $template;
         }
 
@@ -57,6 +68,7 @@ class ojnTemplate {
 			}
             $menu .= ' | <a href="index.php?logout">Logout ('.$this->UInfos['username'].')</a>';
 		}
+		$menu .= ' | <a href="help.php">Aide</a>';
 		return $menu;
 	}
 
@@ -71,5 +83,9 @@ class ojnTemplate {
 		}
 		return !empty($menu) ? $menu : '<li>No Bunny</li>';
 	}
+}
+function toRegex($str)
+{
+	return "|".$str."|";
 }
 ?>

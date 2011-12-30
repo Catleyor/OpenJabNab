@@ -2,6 +2,7 @@
 define('ROOT_SITE', realpath(dirname(__FILE__)."/../")."/");
 define('ROOT_WWW_ADMIN', 'http://<HOSTNAME>/ojn_admin/');
 define('ROOT_WWW_API', 'http://<HOSTNAME>/ojn_api/');
+define('ADMIN_EMAIL', '<EMAIL>');
 
 session_start('openJabNab');
 require_once(ROOT_SITE.'class/api.class.php');
@@ -20,6 +21,12 @@ if(isset($_SESSION['token']) && !strpos($_SERVER['REQUEST_URI'],"logout")) {
 	}
 	if(!$Infos['isValid'])
 		header('Location: index.php?logout');
+}
+$translations = array();
+if(isset($Infos['language']))
+{
+	if(file_exists(ROOT_SITE.'class/translations.'.$Infos['language'].'.php'))
+		require_once(ROOT_SITE.'class/translations.'.$Infos['language'].'.php');
 }
 $ojnTemplate->setUInfos($Infos);
 ob_start(array($ojnTemplate,'display'));

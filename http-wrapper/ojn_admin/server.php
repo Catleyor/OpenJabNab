@@ -18,16 +18,13 @@ if((!empty($_GET['plug']) && !empty($_GET['stat'])) || (!empty($_POST['plug']) &
 	else
 		$_SESSION['message']['error'] = "No plugin with such name.";
 	header('Location: server.php');
-}
-if(isset($_GET['RemoveAccount']) && !empty($_GET['user'])) {
-	$_SESSION['message'] = $ojnAPI->getApiString('accounts/removeAccount?user='.$_GET['user'].'&'.$ojnAPI->getToken());
+} else if(!empty($_GET['removeA'])) {
+	$_SESSION['message'] = $ojnAPI->getApiString('accounts/removeAccount?login='.$_GET['removeA'].'&'.$ojnAPI->getToken());
 	header('Location: server.php');
-}
-if(isset($_GET['RemoveBunny']) && !empty($_GET['serial'])) {
-	$_SESSION['message'] = $ojnAPI->getApiString('bunnies/removeBunny?serial='.$_GET['serial'].'&'.$ojnAPI->getToken());
+} else if(!empty($_GET['removeB'])) {
+	$_SESSION['message'] = $ojnAPI->getApiString('bunnies/removeBunny?serial='.$_GET['removeB'].'&'.$ojnAPI->getToken());
 	header('Location: server.php');
-}
-if(isset($_GET['RemoveZtamp']) && !empty($_GET['serial'])) {
+}else if(isset($_GET['RemoveZtamp']) && !empty($_GET['serial'])) {
 	$_SESSION['message'] = $ojnAPI->getApiString('ztamps/removeZtamp?serial='.$_GET['serial'].'&'.$ojnAPI->getToken());
 	header('Location: server.php');
 }
@@ -77,8 +74,8 @@ if(isset($_SESSION['message']) && empty($_GET)) {
 ?>
 	<tr<?php echo $i++ % 2 ? " class='l2'" : "" ?>>
 		<td><?php echo $Plugins[$p]; ?></td>
-		<td width="15%"><a href="server_plugin.php?p=<?php echo $p; ?>">Configurer</a></td>
-		<td width="15%"><?php if($Plugins[$p][1]): ?><a href="?stat=reload&plug=<?php echo $p ?>">Recharger</a><?php endif; ?></td>
+		<td width="21%"><a href="server_plugin.php?p=<?php echo $p; ?>">Setup</a></td>
+		<td width="21%"><?php if($Plugins[$p][1]): ?><a href="?stat=reload&plug=<?php echo $p ?>">Reload</a><?php endif; ?></td>
 	</tr>
 <?php } ?>
 </table>
@@ -94,9 +91,9 @@ if(isset($_SESSION['message']) && empty($_GET)) {
 ?>
 	<tr<?php echo $i++ % 2 ? " class='l2'" : "" ?>>
 		<td><?php echo $Plugins[$p]; ?></td>
-		<td width="15%"><a href="server_plugin.php?p=<?php echo $p; ?>">Configurer</a></td>
-		<td <?php echo in_array($p,$APlugins) ? 'width="15%"' : 'colspan="2"'; ?>><a href="?stat=<?php echo in_array($p,$APlugins) ? "deactivate" : "activate"; ?>&plug=<?php echo $p ?>"><?php echo in_array($p,$APlugins) ? "D&eacute;sa" : "A"; ?>ctiver le plugin</a>
-		<?php if(in_array($p,$APlugins)): ?><td width="15%"><a href="?stat=reload&plug=<?php echo $p ?>">Recharger</a></td><?php endif; ?>
+		<td width="14%"><a href="server_plugin.php?p=<?php echo $p; ?>">Setup</a></td>
+		<td <?php echo in_array($p,$APlugins) ? 'width="14%"' : 'colspan="2"'; ?>><a href="?stat=<?php echo in_array($p,$APlugins) ? "deactivate" : "activate"; ?>&plug=<?php echo $p ?>"><?php echo in_array($p,$APlugins) ? "Dea" : "A"; ?>ctivate plugin</a>
+		<?php if(in_array($p,$APlugins)): ?><td width="14%"><a href="?stat=reload&plug=<?php echo $p ?>">Reload</a></td><?php endif; ?>
 	</tr>
 <?php } ?>
 </table>
@@ -104,7 +101,7 @@ if(isset($_SESSION['message']) && empty($_GET)) {
 <table style="width: 80%">
 	<tr>
 		<th>Bunnies &amp; Ztamps Plugins</th>
-		<th colspan="2">Actions</th>
+		<th colspan="3">Actions</th>
 	</tr>
 <?php
 	$i = 0;
@@ -113,8 +110,9 @@ if(isset($_SESSION['message']) && empty($_GET)) {
 ?>
 	<tr<?php echo $i++ % 2 ? " class='l2'" : "" ?>>
 		<td><?php echo $Plugins[$p]; ?></td>
-		<td <?php echo in_array($p,$APlugins) ? 'width="15%"' : 'colspan="2"'; ?> ><a href="?stat=<?php echo in_array($p,$APlugins) ? "deactivate" : "activate"; ?>&plug=<?php echo $p ?>"><?php echo in_array($p,$APlugins) ? "D&eacute;sa" : "A"; ?>ctiver le plugin</a>
-		<?php if(in_array($p,$APlugins)): ?></td><td width="15%"><a href="?stat=reload&plug=<?php echo $p ?>">Recharger</a><?php endif; ?>
+		<td width="14%"><a href="server_plugin.php?p=<?php echo $p; ?>">Setup</a></td>
+		<td <?php echo in_array($p,$APlugins) ? 'width="14%"' : 'colspan="2"'; ?> ><a href="?stat=<?php echo in_array($p,$APlugins) ? "deactivate" : "activate"; ?>&plug=<?php echo $p ?>"><?php echo in_array($p,$APlugins) ? "Dea" : "A"; ?>ctivate plugin</a>
+		<?php if(in_array($p,$APlugins)): ?></td><td width="14%"><a href="?stat=reload&plug=<?php echo $p ?>">Reload</a><?php endif; ?>
 		</td>
 	</tr>
 <?php } ?>
@@ -205,8 +203,8 @@ if(isset($_SESSION['message']) && empty($_GET)) {
 	<tr<?php echo $i++ % 2 ? " class='l2'" : "" ?>>
 		<td width="15%" <?php echo in_array($l,$Admins) ? 'style="font-weight:bold;"' :''; ?>><?php echo $l; ?></td>
 		<td><?php echo $name; ?></td>
-		<td width="15%"><?php echo in_array($l,$Online) ? "C":"D&eacute;c"; ?>onnect&eacute;</td>
-		<td width="15%"><a href="?RemoveAccount&user=<?php echo $l; ?>">Supprimer</a></td>
+		<td width="20%"><?php echo in_array($l,$Online) ? "C":"D&eacute;c"; ?>onnect&eacute;</td>
+		<td><a href="server.php?removeA=<?php echo $l; ?>">Remove</a></td>
 	</tr>
 <?php } ?>
 </table>

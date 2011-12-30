@@ -37,13 +37,47 @@ if(!empty($_GET['b'])) {
 	$_SESSION['message'] = $BVoice = $ojnAPI->getApiString('bunny/'.$_SESSION['bunny'].'/setTTSVoice?voice='.$_GET['bTTS'].'&'.$ojnAPI->getToken());
 	header('Location: bunny.php');
 }
-
-if(!empty($_GET['aVAPI'])) {
+else if(!empty($_GET['pVAPI'])) {
+	$pub = (int)$_GET['pVAPI'] - 1;
+	if($pub == 0 || $pub == 1)
+		$_SESSION['message'] = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/setPublicVAPI?public=".$pub."&".$ojnAPI->getToken());
+	else
+		$_SESSION['message'] = "Error: Error in choice";
+	header("Location: bunny.php");
+}
+else if(!empty($_GET['aVAPI'])) {
 	$st = (string)$_GET['aVAPI'];
 	if($st == "enable" || $st == "disable")
 		$_SESSION['message'] = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/".$st."VAPI?".$ojnAPI->getToken());
 	else
 		$_SESSION['message'] = "Error: Error in choice";
+	header("Location: bunny.php");
+}
+elseif(!empty($_POST) && count($_POST) == 4) {
+	$ping = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/locate/setcustomlocate?param=PingServer&value=".$_POST['pingserver']."&".$ojnAPI->getToken());
+	$broad = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/locate/setcustomlocate?param=BroadServer&value=".$_POST['broadserver']."&".$ojnAPI->getToken());
+	$xmpp = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/locate/setcustomlocate?param=XmppServer&value=".$_POST['xmppserver']."&".$ojnAPI->getToken());
+	$port = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/locate/setcustomlocate?param=ListeningXmppPort&value=".$_POST['xmppport']."&".$ojnAPI->getToken());
+	if(isset($ping['ok']))
+		$_SESSION['message']['ok'] = $ping['ok'];
+	else
+		$_SESSION['message']['error'] = $ping['error'];
+
+	if(isset($broad['ok']))
+		$_SESSION['message']['ok'] .= "<br />".$broad['ok'];
+	else
+		$_SESSION['message']['error'] .= "<br />".$broad['error'];
+
+	if(isset($xmpp['ok']))
+		$_SESSION['message']['ok'] .= "<br />".$xmpp['ok'];
+	else
+		$_SESSION['message']['error'] .= "<br />".$xmpp['error'];
+
+	if(isset($port['ok']))
+		$_SESSION['message']['ok'] .= "<br />".$port['ok'];
+	else
+		$_SESSION['message']['error'] .= "<br />".$port['error'];
+
 	header("Location: bunny.php");
 }
 
@@ -69,7 +103,10 @@ $Token = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/getVAPIToken?".$ojn
 $Token = isset($Token['value']) ? $Token['value'] : '';
 	/* Status */
 $Status = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/getVAPIStatus?".$ojnAPI->getToken());
-$Status= (!empty($Status['value']) && $Status['value'] == "true") ? true : false;
+$Status= (!empty($Status['value']) && $Status['value'] == 'enabled') ? true : false;
+/* Public */
+$Public = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/getPublicVAPI?".$ojnAPI->getToken());
+$Public= (!empty($Public['value']) && $Public['value'] == "public") ? true : false;
 
 /* TTS Stuff */
 $Voices = $ojnAPI->getApiList("server/tts/getListOfVoices?".$ojnAPI->getToken());
@@ -119,6 +156,11 @@ TTSVoice : <select name="bTTS">
 <?php } ?>
 </select><input type="submit" value="Enregistrer"></form><br />
 <form method="get">
+Public: <input type="radio" name="pVAPI" value="2" <?php echo $Public ? 'checked="checked"' : ''; ?>/> Public
+<input type="radio" name="pVAPI" value="1" <?php echo !$Public ? 'checked="checked"' : ''; ?> /> Private
+<input type="submit" value="Enregister">
+</form>
+<form method="get">
 <input name="disconnect" type="submit" value="Deconnecter le lapin">
 </form>
 <br />
@@ -131,6 +173,15 @@ TTSVoice : <select name="bTTS">
 <input name="resetpwd" type="submit" value="Remettre a zero le mot de passe">
 <input name="resetown" type="submit" value="Liberer le lapin de son maitre">
 </form>
+<?php
+$lasts = $ojnAPI->getApiMapped("bunny/".$_SESSION['bunny']."/getlasts?".$ojnAPI->getToken());
+?>
+<div><label>Last Jabber Connection : </label><?php echo $lasts['Last JabberConnection'] != "" ? date("d/m/Y H:i:s", strtotime($lasts['Last JabberConnection'])) : '' ?></div>
+<div><label>Last IP : </label><?php echo $lasts['LastIP'] ?></div>
+<div><label>Last Record : </label><?php echo $lasts['LastRecord'] ?></div>
+<div><label>Last Locate : </label><?php echo $lasts['LastLocate'] != "" ? date("d/m/Y H:i:s", strtotime($lasts['LastLocate'])) : '' ?></div>
+<div><label>Last Locate String : </label><?php echo $lasts['LastLocateString'] ?></div>
+<div><label>Last Cron : </label><?php echo $lasts['LastCron'] ?></div>
 </fieldset>
 <?php endif; ?>
 <h2>Plugins</h2>
@@ -165,6 +216,28 @@ if(isset($_SESSION['message']) && empty($_GET)) {
 	</tr>
 <?php } ?>
 </table>
-<?php }
+</center>
+<h2>Server</h2>
+<fieldset>
+<legend style="color: red">Use at your own risk, bunny may loose connection if parameters are bad</legend>
+<form method="post">
+<?php
+$pingserver = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/locate/getcustomlocate?param=PingServer&".$ojnAPI->getToken());
+$pingserver = $pingserver['value'];
+$broadserver = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/locate/getcustomlocate?param=BroadServer&".$ojnAPI->getToken());
+$broadserver = $broadserver['value'];
+$xmppserver = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/locate/getcustomlocate?param=XmppServer&".$ojnAPI->getToken());
+$xmppserver = $xmppserver['value'];
+$xmppport = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/locate/getcustomlocate?param=ListeningXmppPort&".$ojnAPI->getToken());
+$xmppport = $xmppport['value'];
+?>
+Ping Server : <input type="text" name="pingserver" value="<?php echo $pingserver ?>"><br />
+Broad Server : <input type="text" name="broadserver" value="<?php echo $broadserver ?>"><br />
+Xmpp Server : <input type="text" name="xmppserver" value="<?php echo $xmppserver ?>"><br />
+Xmpp Port : <input type="text" name="xmppport" value="<?php echo $xmppport ?>"><br />
+<input type="submit" value="Apply">
+</form>
+<?php
+}
 require_once "include/append.php";
 ?>
