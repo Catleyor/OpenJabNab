@@ -50,6 +50,7 @@ void BunnyManager::InitApiCalls()
 	DECLARE_API_CALL("getListofAllBunnies()",&BunnyManager::Api_GetListOfAllBunnies);
 	DECLARE_API_CALL("getListofAllBunniesOwners()",&BunnyManager::Api_GetListOfAllBunniesOwners);
 	DECLARE_API_CALL("getListofAllConnectedBunnies()",&BunnyManager::Api_GetListOfAllConnectedBunnies);
+	DECLARE_API_CALL("resetAllBunniesPassword()",&BunnyManager::Api_ResetAllBunniesPassword);
 }
 
 API_CALL(BunnyManager::Api_RemoveBunny)
@@ -227,7 +228,7 @@ API_CALL(BunnyManager::Api_GetListOfAllConnectedBunnies) {
 	return new ApiManager::ApiMappedList(list);
 }
 
-API_CALL(BunnyManager::Api_GetListOfAllBunniesOwners) {
+API_CALL(BunnyManager::Api_ResetAllBunniesPassword) {
 	Q_UNUSED(hRequest);
 
 	if(!account.IsAdmin())
@@ -235,7 +236,7 @@ API_CALL(BunnyManager::Api_GetListOfAllBunniesOwners) {
 
 	QMap<QString, QVariant> list;
 	foreach(Bunny * b, listOfBunnies)
-			list.insert(b->GetID(), b->GetGlobalSetting("OwnerAccount",""));
+		b->ClearBunnyPassword();
 
 	return new ApiManager::ApiMappedList(list);
 }
