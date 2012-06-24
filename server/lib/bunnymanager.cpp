@@ -48,7 +48,6 @@ void BunnyManager::InitApiCalls()
 	DECLARE_API_CALL("addBunny(serial)", &BunnyManager::Api_AddBunny);
 	DECLARE_API_CALL("removeBunny(serial)", &BunnyManager::Api_RemoveBunny);
 	DECLARE_API_CALL("getListofAllBunnies()",&BunnyManager::Api_GetListOfAllBunnies);
-	DECLARE_API_CALL("getListofAllBunniesOwners()",&BunnyManager::Api_GetListOfAllBunniesOwners);
 	DECLARE_API_CALL("getListofAllConnectedBunnies()",&BunnyManager::Api_GetListOfAllConnectedBunnies);
 	DECLARE_API_CALL("resetAllBunniesPassword()",&BunnyManager::Api_ResetAllBunniesPassword);
 }
