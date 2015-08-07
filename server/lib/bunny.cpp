@@ -23,6 +23,10 @@
 
 Bunny::Bunny(QByteArray const& bunnyID)
 {
+	// Init click plugins
+	singleClickPlugin = NULL;
+	doubleClickPlugin = NULL;
+
 	// Check bunnies folder
 	QDir bunniesDir = QDir(QCoreApplication::applicationDirPath());
 	if (!bunniesDir.cd("bunnies"))
@@ -147,9 +151,14 @@ ApiManager::ApiAnswer * Bunny::ProcessVioletApiCall(HTTPRequest const& hRequest)
 	                        	                        answer->AddMessage("EARPOSITIONNOTSENT", "Your ears command could not be sent");
                                			        }
                 		                }
+						QString voice = "Claire";
+						if(hRequest.HasArg("voice"))
+						{
+							voice = hRequest.GetArg("voice");
+						}
 		                                if(hRequest.HasArg("tts"))
 		                                {
-							SendPacket(MessagePacket("MU "+TTSManager::CreateNewSound(hRequest.GetArg("tts"), "claire")+"\nPL 3\nMW\n"));
+							SendPacket(MessagePacket("MU "+TTSManager::CreateNewSound(hRequest.GetArg("tts"), voice)+"\nPL 3\nMW\n"));
                 		                        answer->AddMessage("TTSSENT", "Your text has been sent");
 		                                }
                 		                if(hRequest.HasArg("ears"))
