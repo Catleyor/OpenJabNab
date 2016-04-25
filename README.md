@@ -30,15 +30,15 @@ III) Requirements
 * A Nabaztag/tag
 * An Apache server (use of RewriteEngine in .htaccess file) or Lighttpd server (use of mod_rewrite, see README.lighty)
 * PHP scripting enabled at prefered Webserver
-* Qt 4 correctly installed (with dev libraries)
+* Qt 4 correctly installed with dev libraries. (On debian: aptitude install qt4-qmake make gcc build-essential libqt4-dev)
 
 IV) Installation
 ----------------
 
 1. Drop the PHP files into a web server folder. This folder must the root of a domain or subdomain (e.g. my.domain.com)
-2. Generate Makefiles with qmake -r, then make
-3. Edit the openjabnab.ini file and move it to the bin folder (you have to change all "my.domain.com" strings)
-4. Execute openjabnab builded in the bin folder
+2. Go to the "server"" directory, then generate Makefiles with qmake -r, then make
+3. Edit the server/openjabnab.ini file and move it to the server/bin folder (you have to change all "my.domain.com" strings)
+4. Execute openjabnab builded in the server/bin folder
 5. Configure the Nabaztag/tag to use 'my.domain.com/vl' in advanced settings
 6. Restart the Nabaztag/tag
 

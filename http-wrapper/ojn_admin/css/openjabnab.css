@@ -1,417 +1,682 @@
-input {
-	background : #FFFFFF;
-	border : 1px solid rgb(117,144,174);
-	color: rgb(33,50,66);
-}
+/* @override http://ojn.lo.lo/ojn_admin/css/openjabnab.css */
 
-input[type="submit"], input[type="button"], input[type="reset"] {
-	background : #dce6f1;
+/* 
+#########################################################
+CSS for openJabNab
+########################################################
+
+Modified by Soif
+
+ #### Work in progress #########
+
+- Tested on Safari, Chrome, Firefox: No problems
+- Tested on IE7:
+	--> fixed some bugs, but I wont fix all : get a life an use a valid w3 browser or spend yourself hours to get this peice of !#@?&! to work 
+- Not tested on IE8+
+
+# IMPORTANT ###################################################
+Please dont remove the following lines: 
+	\/* @GroupName ---------------- *\/
+	(css code...)
+	\/* @end *\/
+It's used by CSSEdit (the killer CSS Editor) to define folders.
+
+*/
+
+
+/* @group Global
+-------------------------------------------- */
+
+html > body {
+	font-size: 9pt;
 }
 
 body {
-  font-family: verdana, helvetica, arial, sans-serif;
-  font-size: 73%;  /* Enables font size scaling in MSIE */
-  margin: 0;
-  padding: 0;
+	font-family: verdana, helvetica, arial, sans-serif;
+	font-size: 73%;
+	/* Enables font size scaling in MSIE */
+	margin: 0;
+	padding: 0;
+	background: #eeeef0;
+}
+
+input {
+	background: #FFFFFF;
+	border: 1px solid rgb(117,144,174);
+	border-color: #44A #BBC #BBC #44A;
+	color: rgb(33,50,66);
+	padding: 3px;
+	border-radius: 3px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	margin-bottom: 6px;
+}
+
+input[type="submit"],
+input[type="button"], 
+input[type="reset"],
+.button {
+	border-radius: 4px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	padding: 3px 8px;
+	font-weight: bold;
+	box-shadow: 2px 2px 4px #CCC;
+	-webkit-box-shadow: 2px 2px 4px #CCC;
+	-moz-box-shadow: 2px 2px 4px #CCC;
+	border-color: #66A;
+	background: #87e0fd;
+	background: -moz-linear-gradient(top, #87e0fd 0%, #53cbf1 40%, #05abe0 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#87e0fd), color-stop(40%,#53cbf1), color-stop(100%,#05abe0));
+	background: -webkit-linear-gradient(top, #87e0fd 0%,#53cbf1 40%,#05abe0 100%);
+	background: -o-linear-gradient(top, #87e0fd 0%,#53cbf1 40%,#05abe0 100%);
+	background: -ms-linear-gradient(top, #87e0fd 0%,#53cbf1 40%,#05abe0 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#87e0fd', endColorstr='#05abe0',GradientType=0 );
+	background: linear-gradient(top, #87e0fd 0%,#53cbf1 40%,#05abe0 100%);
+	color: #FFF;
+	margin-left: 10px;
+	text-decoration: none;
+	font-size: 10px;
+}
+
+A.button:hover {
+	background: #558;
+	color: #fff;
+	box-shadow: -2px -2px 3px #CCC;
+	-webkit-box-shadow: -2px -2px 3px #CCC;
+	-moz-box-shadow: -2px -2px 3px #CCC;
+}
+
+
+INPUT.buttonRefresh {
+	background: #8F8 url(../images/icon12_reload.png) no-repeat 4px 3px;
+	color: #000;
+	padding-left: 20px;
+}
+
+table {
+	display: table;
+	background: #c3d3e5;
+	color: rgb(33,50,66);
+	border-collapse: collapse;
+	margin: 15px 0;
+	padding: 0;
+	border: 1px solid rgb(117,144,174);
+	font-size: 100%;
+}
+
+tr {
+	display: table-row;
+}
+
+th, td {
+	display: table-cell;
+	border: 1px solid rgb(117,144,174);
+	margin: 0;
+	padding: 5px;
+	vertical-align: top;
+	text-align: left;
+}
+
+tr.l2 td {
+	background: #dce6f1;
+}
+
+th {
+	background-color: rgb(33,50,66);
+	text-align: center;
+	color: rgb(130,128,154);
+	font-weight: bold;
+}
+
+acronym, .titleTip {
+	border-bottom: 1px dotted rgb(61,92,122);
+	cursor: help;
+	margin: 0;
+	padding: 0 0 0.4px 0;
+}
+
+a {
+	color: rgb(61,92,122);
+	background-color: transparent;
+	text-decoration: underline;
+	margin: 0;
+	padding: 0 1px 2px 1px;
+}
+
+a:hover {
+	color: rgb(117,144,174);
+	text-decoration: none;
+}
+
+ol {
+	margin: 1em 0 1.5em 0;
+	padding: 0;
+}
+
+ul {
+	list-style-type: square;
+	margin: 1em 0 1.5em 0;
+	padding: 0;
+}
+
+
+ul li {
+	line-height: 1.5em;
+	margin: 1.25ex 0 0 1.5em;
+	padding: 0;
+}
+
+ol li {
+	line-height: 1.5em;
+	margin: 1.25ex 0 0 2em;
+	padding: 0;
 }
 
 dt {
 	float: left;
 	width: 95px;
+	font-weight: bold;
+	margin: 0;
+	padding: 0 0 1ex 0;
 }
+dl {
+	margin: 1em 0 0.5em 0;
+	padding: 0;
+}
+
 dd {
 	margin-left: 100px;
-}
-table {
-  display:table;
-  background: #c3d3e5;
-  color: rgb(33,50,66);
-  border-collapse:collapse;
-  margin:15px 0;
-  padding:0;
-  border:1px solid rgb(117,144,174);
-  font-size:100%;
-}
-
-tr {
-  display:table-row;
-}
-
-th, td {
-  display: table-cell;
-  border:1px solid rgb(117,144,174);
-  margin:0;
-  padding:5px;
-  vertical-align:top;
-  text-align:left;
-}
-
-tr.l2 td {
-  background: #dce6f1;
-}
-
-th {
-  background-color: rgb(33,50,66);
-  text-align:center;
-  color: rgb(130,128,154);
-  font-weight:bold;
-}
-
-html > body {
-  font-size: 9pt;
-}
-
-acronym, .titleTip {
-  border-bottom: 1px dotted rgb(61,92,122);
-  cursor: help;
-  margin: 0;
-  padding: 0 0 0.4px 0;
-}
-
-a {
-  color: rgb(61,92,122);
-  background-color: transparent;
-  text-decoration: underline;
-  margin: 0;
-  padding: 0 1px 2px 1px;
-}
-
-a:hover {
- color: rgb(117,144,174);
- text-decoration: none;
-}
-
-ol {
-  margin: 1em 0 1.5em 0;
-  padding: 0;
-}
-
-ul {
-  list-style-type: square;
-  margin: 1em 0 1.5em 0;
-  padding: 0;
-}
-
-dl {
-  margin: 1em 0 0.5em 0;
-  padding: 0;
-}
-
-ul li {
-  line-height: 1.5em;
-  margin: 1.25ex 0 0 1.5em;
-  padding: 0;
-}
-
-ol li {
-  line-height: 1.5em;
-  margin: 1.25ex 0 0 2em;
-  padding: 0;
-}
-
-dt {
-  font-weight: bold;
-  margin: 0;
-  padding: 0 0 1ex 0;
-}
-
-dd {
-  line-height: 1.75em;
-  margin: 0 0 1.5em 1.5em;
-  padding: 0;
+	line-height: 1.75em;
+	margin: 0 0 1.5em 0;
+	padding: 0;
 }
 
 .doNotDisplay {
-  display: none !important;
+	display: none !important;
 }
 
-
 .smallCaps {
-  font-size: 117%;
-  font-variant: small-caps;
+	font-size: 117%;
+	font-variant: small-caps;
 }
 
 /* Common */
+
 .error_msg {
-	color: red;
+	color: #C00;
 	border-width: 2px;
 	border-style: solid;
 	font-weight: bold;
 	text-align: center;
-	width: 50%;	
-	margin:auto;
-	padding: 5px
+	width: 70%;
+	margin: 5px auto;
+	padding: 6px;
+	background: #feacac;
+	border-radius: 4px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
 }
 
 .ok_msg {
-	color: blue;
+	color: #438f2a;
+	border-color: #438f2a;
 	border-width: 2px;
 	border-style: solid;
 	font-weight: bold;
 	text-align: center;
-	width: 50%;	
-	margin:auto;
-	padding: 5px
+	width: 70%;
+	margin: 5px auto;
+	padding: 6px;
+	border-radius: 4px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	background-color: #acfbaa;
 }
 
-/* ##### Header ##### */
+FIELDSET {
+	text-align: left;
+	margin: 10px 30px 15px 30px;
+	border-radius: 7px;
+	-moz-border-radius: 7px;
+	-webkit-border-radius: 7px;
+	border: 2px solid #DDD;
+	padding: 12px;
+	color: #555;
+	background: #F5F5F5;
+}
+
+FIELDSET EM {
+	color: orange;
+	margin-bottom: 8px;
+	display: inline-block;
+	font-size: 10px;
+}
+FIELDSET HR{
+	border-color: #fff;
+	border-style: none ;
+	background: #fff;
+	padding: 1px;
+	margin-bottom: 15px;
+}
+LEGEND {
+	color: #99A;
+	font-size: 11px;
+	font-weight: bold;
+	background: #FFF;
+	border: 2px solid #DDD;
+	padding: 2px 10px;
+	border-radius: 4px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+}
+.fieldName{
+	display: inline-block;
+	color: #889;
+	font-weight: bold;
+	width: 180px;
+	text-align: right;
+	padding-bottom: 10px;
+	margin-right: 5px;
+}
+/* @end */
+
+
+/* @group Layout
+-------------------------------------------- */
+#wrapper {
+	width: 1000px;
+	margin: 10px auto;
+	border: 3px solid rgb(33,50,66);
+	border-radius: 8px;
+	-moz-border-radius: 8px;
+	-webkit-border-radius: 8px;
+	background: #FFF;
+	box-shadow: 5px 5px 15px 2px #999;
+	-webkit-box-shadow: 5px 5px 15px 2px #999;
+	-moz-box-shadow: 5px 5px 15px 2px #999;
+}
+
+.colmask {
+	position: relative;  /* This fixes the IE7 overflow hidden bug and stops the layout jumping out of place */
+	clear: both;
+	float: left;
+	width: 100%;
+	overflow: hidden; /* This chops off any overhanging divs */
+}
+
+/* 2 column left menu settings */
+
+.leftmenu {
+	background: #F9F9F9;
+}
+
+.leftmenu .colright {
+	left: 150px;
+	float: left;
+	width: 200%;
+	position: relative;
+	background: #fff;
+}
+
+.leftmenu .col1wrap {
+	right: 150px;
+	float: right;
+	width: 50%;
+	position: relative;
+}
+
+.leftmenu .col1 {
+	margin-left: 150px;
+	position: relative;
+	right: 100%;
+	overflow: hidden;
+}
+
+.leftmenu .col2 {
+	width: 150px;
+	right: 150px;
+	float: left;
+	position: relative;
+}
+
+/* @end */
+
+
+/* @group Header
+-------------------------------------------- */
+
+#header {
+	background-color: #3d5c7a;
+	background: -moz-linear-gradient(top, #3d5c7a 0%, #3d5c7a 47%, #1f4c77 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#3d5c7a), color-stop(47%,#3d5c7a), color-stop(100%,#1f4c77));
+	background: -webkit-linear-gradient(top, #3d5c7a 0%,#3d5c7a 47%,#1f4c77 100%);
+	background: -o-linear-gradient(top, #3d5c7a 0%,#3d5c7a 47%,#1f4c77 100%);
+	background: -ms-linear-gradient(top, #3d5c7a 0%,#3d5c7a 47%,#1f4c77 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3d5c7a', endColorstr='#1f4c77',GradientType=0 );
+	background: linear-gradient(top, #3d5c7a 0%,#3d5c7a 47%,#1f4c77 100%);
+}
+
+#headerBg {
+	background-image: url(../images/nabaztag.png);
+	background-repeat: no-repeat;
+	background-position: right 35px;
+}
 
 .superHeader {
-  color: rgb(130,128,154);
-  background-color: rgb(33,50,66);
-  text-align: right;
-  margin: 0;
-  padding: 0.5ex 10px;
+	color: rgb(130,128,154);
+	background-color: rgb(33,50,66);
+	text-align: right;
+	margin: 0;
+	padding: 0.5ex 10px;
+	border-bottom: 1px solid rgb(66,100,122);
 }
 
 .superHeader span {
-  color: rgb(195,196,210);
-  background-color: transparent;
-  font-weight: bold;
-  text-transform: uppercase;
+	color: rgb(195,196,210);
+	background-color: transparent;
+	font-weight: bold;
+	text-transform: uppercase;
 }
 
 .superHeader a {
-  color: rgb(195,196,210);
-  background-color: transparent;
-  text-decoration: none;
-  margin: 0;
-  padding: 0 0.25ex 0 0;
+	color: #dde;
+	color: #fff;
+	background-color: transparent;
+	text-decoration: none;
+	margin: 0;
+	padding: 0 0.25ex 0 0;
 }
 
 .superHeader a:hover {
-  color: rgb(193,102,90);
-  background-color: transparent;
-  text-decoration: none;
+	color: yellow;
+	background-color: transparent;
+	text-decoration: none;
 }
 
 .midHeader {
-  color: white;
-  background-color: rgb(61,92,122);
-  margin: 0;
-  padding: 0.26ex 10px;
+	color: white;
+	margin: 0;
+	padding: 0.26ex 10px;
+/*border-bottom: 1px solid rgb(122,184,200);*/
 }
 
 .headerTitle {
-  font-size: 300%;
-  margin: 0;
-  padding: 0;
+	font-size: 300%;
+	margin: 0;
+	padding: 0;
 }
 
 .headerSubTitle {
-  font-size: 151%;
-  font-weight: normal;
-  font-style: italic;
-  margin: 0 0 1ex 0;
-  padding: 0;
+	font-size: 151%;
+	font-weight: normal;
+	font-style: italic;
+	margin: 0 0 1ex 0;
+	padding: 0;
 }
 
 .headerLinks {
-  text-align: right;
-  margin: 0;
-  padding: 0 0 2ex 0;
-  position: absolute;
-  right: 1.5em;
-  top: 3.5em;
+	text-align: right;
+	margin: 0;
+	padding: 0 0 2ex 0;
+	position: absolute;
+	right: 1.5em;
+	top: 3.5em;
 }
 
 .headerLinks a {
-  color: white;
-  background-color: transparent;
-  text-decoration: none;
-  margin: 0;
-  padding: 0 0 0.5ex 0;
-/*  display: block;*/
+	color: white;
+	background-color: transparent;
+	text-decoration: none;
+	margin: 0;
+	padding: 0 0 0.5ex 0;
 }
 
 .headerLinks a:hover {
-  color: rgb(195,196,210);
-  background-color: transparent;
-  text-decoration: underline;
+	color: rgb(195,196,210);
+	background-color: transparent;
+	text-decoration: underline;
 }
+
+
+/* @group Menu
+++++++++++++++++++++++++++++++++++ */
 
 .subHeader {
-  color: white;
-  background-color: rgb(117,144,174);
-  margin: 0;
-  padding: 0.5ex 10px;
+	color: white;
+	margin: 0;
+	padding: 0.5ex 10px 0 10px;
+	border-bottom: 2px solid rgb(33,50,66);
 }
 
-.subHeader a, .subHeader .highlight {
-  color: white;
-  background-color: transparent;
-  font-size: 110%;
-  font-weight: bold;
-  text-decoration: none;
-  margin: 0;
-  padding: 0 0.25ex 0 0;
+.subHeader a {
+	background: white;
+	color: #000;
+	text-decoration: none;
+	margin: 0 3px 0 0;
+	display: inline-block;
+	padding: 4px 8px 3px 8px;
+	border-radius: 5px 5px 0 0;
+	-moz-border-radius: 5px 5px 0 0;
+	-webkit-border-radius: 5px 5px 0 0;
+	border-color: rgb(33,50,66);
+	border: 2px solid;
+	background: #CCC;
+	margin-bottom: -2px;
+	/* Fix for IE7: Microsoft you sucks */
+	*margin-bottom: -4px;
 }
 
-.subHeader a:hover, .subHeader .highlight {
-  color: rgb(255,204,0);
-  background-color: transparent;
-  text-decoration: none;
+.subHeader a.selected {
+	font-weight: bold;
+	border-color: rgb(33,50,66);
+	border-bottom-color: #FFF;
+	color: #446;
+	background: #FFF;
 }
 
-/* ##### Side Menu ##### */
-
-#side-bar {
-  color: rgb(204,204,204);
-  background-color: transparent;
-  list-style-type: square;
-  list-style-position: inside;
-  width: 11em;
-  margin: 0;
-  padding: 1ex 0;
-  border: 1px solid rgb(204,204,204);
-  position: absolute;
-  left: 1.5ex;
-  top: 12em;
+.subHeader a:hover {
+	border-color: #000;
+	border-bottom-color: #FFF;
+	background: #FFF;
+	color: #88A;
 }
 
-#side-bar li {
-  color: #FF0000;
+/* @end */
+
+/* @end */
+
+
+
+/* @group Side Menu
+------------------------------------------------- */
+
+#sidebar {
+	margin: 0;
+	padding: 15px 12px 0 12px;
+}
+#sidebar H5{
+	padding: 0;
+	margin: 0 0 10px 0;
+	font-size: 10px;
+	color: #AAB;
+}
+#sidebar li {
+	color: #FF0000;
+	background: #FEE url(../images/icon12_offline.png) no-repeat 5px 4px;
+	margin: 0 0 12px 0;
+	padding: 1px 2px 1px 17px;
+	border: 1px solid #bbb;
+	border-radius: 4px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	list-style: none;
+	box-shadow: 1px 1px 3px #DDD;
+	-webkit-box-shadow: 1px 1px 3px #DDD;
+	-moz-box-shadow: 1px 1px 3px #DDD;
+}
+#sidebar li A{
+	display: block;
+}
+#sidebar li.online {
+	color: #00FF00;
+	background: #EFE url(../images/icon12_online.png) no-repeat 5px 4px;
+}
+#sidebar li.selected {
+	background-color: #FFF;
+	border: 1px solid #99A;
+	box-shadow: -1px -1px 3px #DDD;
+	-webkit-box-shadow: -1px -1px 3px #DDD;
+	-moz-box-shadow: -1px -1px 3px #DDD;
+}
+#sidebar li.selected A {
+	color: #000;
 }
 
-#side-bar li.online {
-  color: #00FF00;
+#sidebar li.none {
+	background: #FFF url(../images/icon12_warning.png) no-repeat 5px 4px;
+	border-style: dashed;
+	color: #aaa;
+	padding-left: 25px;
 }
 
-[id="side-bar"] {
-  position: fixed !important;  /* Makes the side menu scroll with the page. Doesn't work in MSIE */
+#sidebar a {
+	padding-left: 5px;
+	text-decoration: none;
 }
 
-#side-bar a {
-  text-decoration: none;
+#sidebar li:hover {
+	border-color: #000;
+	background-color: #eee;
+	box-shadow: 0;
+	-webkit-box-shadow: 0;
+	-moz-box-shadow: 0;
 }
 
-#side-bar:hover {
-  color: rgb(117,144,174);
-  background-color: transparent;
-  border-color: rgb(117,144,174);
+#sidebar li a:hover {
+	color: #000;
 }
 
-#side-bar li {
-  margin: 0;
-  padding: 0.75ex 0 1ex 1.75ex;
+/* @end */
+
+
+/* @group Main Content
+--------------------------------------------------- */
+
+#content {
+	text-align: justify;
+	padding: 0 20px 70px 20px;
+	font-family: "trebuchet ms", verdana, helvetica, arial, sans-serif;
+  border-left: 2px solid #eee;
+	background: url(../images/nabaztag2.png) no-repeat right -120px;
 }
 
-#side-bar li:hover {
-  color: rgb(61,92,122);
-  background-color: transparent;
+#content h1 {
+	color: rgb(117,144,174);
+	background-color: transparent;
+	font-size: 186%;
+	margin: 0;
+	padding: 10px 0 12px 0;
 }
 
-
-#side-bar li a:hover {
-  text-decoration: underline;
+#content h2 {
+	color: rgb(61,92,122);
+	background-color: transparent;
+	font-family: "trebuchet ms", verdana, helvetica, arial, sans-serif;
+	font-weight: normal;
+	font-size: 151%;
+	margin: 0;
+	padding: 10px 0 8px 0;
 }
 
-
-/* ##### Main Copy ##### */
-
-#main-copy {
-  text-align: justify;
-  margin: -0.5ex 1em 1em 12.5em;
-  padding: 0.5em 10px;
-  clear: left;
-}
-
-#main-copy h1 {
-  color: rgb(117,144,174);
-  background-color: transparent;
-  font-family: "trebuchet ms", verdana, helvetica, arial, sans-serif;
-  font-size: 186%;
-  margin: 0;
-  padding: 1.5ex 0 0 0;
-}
-
-#main-copy h2 {
-  color: rgb(61,92,122);
-  background-color: transparent;
-  font-family: "trebuchet ms", verdana, helvetica, arial, sans-serif;
-  font-weight: normal;
-  font-size: 151%;
-  margin: 0;
-  padding: 1ex 0 0 0;
-}
-
-#main-copy p {
-  line-height: 1.75em;
-  margin: 1em 0 1.5em 0;
-  padding: 0;
+#content p {
+	line-height: 1.75em;
+	margin: 1em 0 1.5em 0;
+	padding: 0;
 }
 
 .newsHeading {
-  color: rgb(61,92,122);
-  background-color: transparent;
-  font-family: "trebuchet ms", verdana, helvetica, arial, sans-serif;
-  font-size: 145%;
-  text-decoration: none;
-  margin: 0;
-  padding: 1ex 0 0 0;
-  display: block;
+	color: rgb(61,92,122);
+	background-color: transparent;
+	font-family: "trebuchet ms", verdana, helvetica, arial, sans-serif;
+	font-size: 145%;
+	text-decoration: none;
+	margin: 0;
+	padding: 1ex 0 0 0;
+	display: block;
 }
 
 .newsHeading:hover {
-  color: rgb(117,144,174);
-  background-color: transparent;
-  text-decoration: underline;
+	color: rgb(117,144,174);
+	background-color: transparent;
+	text-decoration: underline;
 }
 
 .newsDate {
-  font-style: italic;
-  margin: 0 !important;
-  padding: 0;
+	font-style: italic;
+	margin: 0 !important;
+	padding: 0;
 }
 
 .newsSummary {
-  margin: 1.5ex 0 2.5ex 0.75ex !important;
-  padding: 0;
+	margin: 1.5ex 0 2.5ex 0.75ex !important;
+	padding: 0;
 }
 
 .more {
-  text-align: right;
-  margin: 0;
-  padding: 0.5em 0;
+	text-align: right;
+	margin: 0;
+	padding: 0.5em 0;
 }
 
 .more a {
-  color: rgb(61,92,122);
-  background-color: transparent;
-  font-size: 92%;
-  text-decoration: underline;
-  margin: 0;
-  padding: 0.25ex 0.75ex;
+	color: rgb(61,92,122);
+	background-color: transparent;
+	font-size: 92%;
+	text-decoration: underline;
+	margin: 0;
+	padding: 0.25ex 0.75ex;
 }
 
 .more a:hover {
-  color: rgb(117,144,174);
-  text-decoration: none;
+	color: rgb(117,144,174);
+	text-decoration: none;
 }
 
+/* @end */
 
-/* ##### Footer ##### */
 
+/* @group Footer
+-------------------------------------------- */
 #footer {
-  color: rgb(51,51,102);
-  background-color: rgb(239,239,239);
-  font-size: 87%;
-  text-align: center;
-  line-height: 1.25em;
-  margin: 2em 0 0 0;
-  padding: 1ex 10px;
-  clear: left;
+	color: #FFF;
+	background-color: rgb(33,50,66);
+	font-size: 87%;
+	text-align: center;
+	line-height: 1.25em;
+	margin: 0;
+	padding: 1ex 10px;
+	clear: both;
 }
 
 #footer a {
-  color: rgb(0,68,204);
-  background-color: transparent;
-  text-decoration: underline;
+	color: yellow;
+	text-decoration: underline;
 }
 
 #footer a:hover {
-  text-decoration: none;
+	text-decoration: none;
 }
+
+#footer .doNotPrint SPAN {
+	padding: 0 10px;
+}
+
+/* @end */
+
+
+/* @group Globals
+-------------------------------------------- */
 
 .three_cols {
 	width: 31%;
@@ -426,3 +691,162 @@ dd {
 	margin-right: 10px;
 	float: left;
 }
+
+/* @end */
+
+
+/* @group Table Plugins
+-------------------------------------------- */
+.tablePlugins{
+	margin-left: 30px;
+}
+.tablePlugins TD {
+	padding: 5px;
+}
+
+.tablePlugins A {
+	text-decoration: none;
+	font-size: 10px;
+	color: #000;
+	padding: 3px 8px 3px 20px;
+	border: 1px solid #666;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+}
+
+.tablePlugins td.add A {
+	background: #dfd url(../images/icon12_add.png) no-repeat 4px 3px;
+}
+
+.tablePlugins td.remove A {
+	background: #fdd url(../images/icon12_remove.png) no-repeat 4px 3px;
+}
+
+.tablePlugins td.config A {
+	background: #fff url(../images/icon12_tool.png) no-repeat 4px 3px;
+}
+
+.tablePlugins td.reload A {
+	background: #ddf url(../images/icon12_reload.png) no-repeat 4px 3px;
+}
+
+.tablePlugins TR:hover TD {
+	background: #F5F5FF;
+}
+
+.tablePlugins td A:hover {
+	background-color: #334;
+	color: #fff;
+}
+
+/* @end */
+
+
+/* @group Page Index
+-------------------------------------------- */
+
+#pageIndex .box {
+	background: #F5F5F5;
+	border: 2px solid #aab;
+	padding: 15px;
+	width: 310px;
+	margin-left: 10px;
+	margin-right: 10px;
+	float: left;
+	height: 170px;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	background: #f9f9f9;
+	background: -moz-linear-gradient(top, #f9f9f9 0%, #e0e0ea 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f9f9f9), color-stop(100%,#e0e0ea));
+	background: -webkit-linear-gradient(top, #f9f9f9 0%,#e0e0ea 100%);
+	background: -o-linear-gradient(top, #f9f9f9 0%,#e0e0ea 100%);
+	background: -ms-linear-gradient(top, #f9f9f9 0%,#e0e0ea 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f9f9f9', endColorstr='#e0e0ea',GradientType=0 );
+	background: linear-gradient(top, #f9f9f9 0%,#e0e0ea 100%);
+	box-shadow: 2px 2px 5px #DDD;
+	-webkit-box-shadow: 2px 2px 5px #DDD;
+	-moz-box-shadow: 2px 2px 5px #DDD;
+	margin-bottom: 10px;
+}
+#pageIndex .box H1 {
+	padding-top: 0;
+	font-size: 18px;
+	padding-bottom: 7px;
+}
+
+#pageIndex .indexBoxes {
+	width: 730px;
+	margin: auto;
+	overflow: hidden;
+	margin-top: 40px;
+}
+
+#pageIndex dt {
+	padding-top: 8px;
+	text-align: right;
+	padding-right: 10px;
+}
+
+#pageIndex dd INPUT {
+	font-size: 17px;
+	margin: 0;
+	width: 180px;
+}
+
+#pageIndex .indexSubmit {
+	margin-left: 95px;
+}
+
+#pageIndex .indexSubmit INPUT,
+#pageIndex .buttonBig {
+	font-size: 14px;
+}
+
+/* @end */
+
+
+
+
+/* @group Other Pages
+-------------------------------------------- */
+#pageServer .tablePlugins {
+	width: 90%;
+}
+
+#pageApi PRE {
+	border: 2px solid #aaa;
+	background-color: #eee;
+	padding: 5px;
+	font-size: 11px;
+}
+
+#pagePluginTv .channel{
+	text-align: left;
+	display: inline-block;
+	width: 120px;
+}
+
+#pageBunny .apiStats{
+	margin: 3px 0;
+}
+
+#pageBunny .apiStats LABEL{
+	width: 180px;
+	display: inline-block;
+	text-align: right;
+	margin-right: 10px;
+	color: #aaa;
+}
+
+#pageZtamp UL{
+	padding-bottom: 40px;
+}
+#pageZtamp .lastZtamp{
+	font-style: italic;
+	color: #888;
+	padding: 5px 0;
+}
+/* @end */

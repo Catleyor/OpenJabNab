@@ -11,11 +11,11 @@ if(!empty($_POST['a'])) {
 }
 ?>
 <form method="post">
-<fieldset>
-<legend>Actions</legend>
-<input type="radio" name="a" value="pack" checked="true"/> Packet<br />
-<input type="radio" name="a" value="msg" /> Message<br />
-<input type="text" name="textf" />
-<input type="submit" value="Envoyer" />
-</fieldset>
+	<fieldset>
+		<legend>Actions</legend>
+		<input type="radio" name="a" value="pack" checked="true"/> Packet<br />
+		<input type="radio" name="a" value="msg" /> Message<br />
+		<input type="text" name="textf" />
+		<input type="submit" value="Envoyer" />
+	</fieldset>
 </form>

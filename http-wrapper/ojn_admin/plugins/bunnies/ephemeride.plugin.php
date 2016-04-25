@@ -15,18 +15,18 @@ else if(!empty($_GET['rmwbc'])) {
 ?>
 <form method="post">
 <fieldset>
-<legend>Actions</legend>
-<input type="radio" name="a" value="addwbc" checked="true" /> Add Webcast<br />
-Time:<input type="text" name="etime" />
-<input type="submit" value="Enregister">
+	<legend>Actions</legend>
+	<span class="fieldName">Webcast</span><input type="radio" name="a" value="addwbc" checked="true" /> Add<br />
+	<span class="fieldName">Time</span><input type="text" name="etime" />
+	<input type="submit" value="Enregister">
 
 <?php
 $webcasts = $ojnAPI->getApiList("bunny/".$_SESSION['bunny']."/ephemeride/getwebcastslist?".$ojnAPI->getToken());
 if($webcasts){
 ?>
 <hr />
-<center>
-<table style="width: 80%">
+
+	<table class="tablePlugins" cellspacing=0>
         <tr>
                 <th colspan="3">Webcast</th>
         </tr>
@@ -40,10 +40,10 @@ if($webcasts){
 ?>
         <tr<?php echo $i++ % 2 ? " class='l2'" : "" ?>>
                 <td><?php echo $item ?></td>
-                <td width="15%"><a href="bunny_plugin.php?p=ephemeride&rmwbc=<?php echo $item ?>">Remove</a></td>
+                <td width="15%" class="remove"><a href="bunny_plugin.php?p=ephemeride&rmwbc=<?php echo $item ?>">Remove</a></td>
         </tr>
 <?php  } ?>
-</table>
+	</table>
 <?php } ?>
 
 

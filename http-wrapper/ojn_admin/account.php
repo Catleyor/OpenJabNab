@@ -43,6 +43,8 @@ if(!empty($_POST['npwd']) && !empty($_POST['npwd2'])) {
 if(!empty($r))
     header('Location: account.php');
 ?>
+<h1>Account Settings</h1>
+
 <?php
 if(isset($_SESSION['message']) && empty($r)) {
 	if(strstr($_SESSION['message'],'Error : ')) {?>
@@ -55,67 +57,78 @@ if(isset($_SESSION['message']) && empty($r)) {
 	<?php unset($_SESSION['message']);
 }
 ?>
+
 <fieldset>
-<legend>Add a bunny to your account</legend>
-<em>Will only work if the server allows it</em><br />
-<form method="post">
-<label>Name of your Bunny: <input type="text" name="bname" /></label><br />
-<label>MAC Address: <input type="text" name="bmac" /></label><br />
-<input type="submit" value="Add" />
-</form>
+	<legend>Add a bunny to your account</legend>
+	<!-- <em>Will only work if the server allows it</em><br /> -->
+	<form method="post">
+		<span class="fieldName">Name of your Bunny:</span><input type="text" name="bname" /><br />
+		<span class="fieldName">MAC Address:</span><input type="text" name="bmac" /> 
+		<input type="submit" value="Add" />
+	</form>
 </fieldset>
+
+
 <fieldset>
-<legend>Remove a bunny from your account</legend>
-<em>No confirmation, so... be careful!</em><br />
-<form method="post">
-<select name="bmac_rm">
-    <?php
-    $bunnies = $ojnAPI->getListOfBunnies(true);
-    if(!empty($bunnies))
-        foreach($bunnies as $mac => $bunny) { ?>
-        <option value="<?php echo $mac; ?>"><?php echo $bunny; ?> (<?php echo $mac; ?>)</option>
-    <?php } ?>
-</select>
-<input type="submit" value="Remove" />
-</form>
+	<legend>Remove a bunny from your account</legend>
+	<!-- <em>No confirmation, so... be careful!</em><br /> -->
+	<form method="post">
+		<select name="bmac_rm">
+		    <?php
+		    $bunnies = $ojnAPI->getListOfBunnies(true);
+		    if(!empty($bunnies))
+		        foreach($bunnies as $mac => $bunny) { ?>
+		        <option value="<?php echo $mac; ?>"><?php echo $bunny; ?> (<?php echo $mac; ?>)</option>
+		    <?php } ?>
+		</select>
+		<input type="submit" value="Remove" onclick="javascript:return confirm('Are you sure you want to remove this bunny ?')" />
+	</form>
 </fieldset>
+
+
 <fieldset>
-<legend>Remove a ztamp from your account</legend>
-<em>No confirmation, so... be careful!</em><br />
-<form method="post">
-<select name="zid_rm">
-    <?php
-    $ztamps = $ojnAPI->getListOfZtamps(true);
-    if(!empty($ztamps))
-        foreach($ztamps as $id => $ztamp) { ?>
-        <option value="<?php echo $id; ?>"><?php echo $ztamp; ?> (<?php echo $id; ?>)</option>
-    <?php } ?>
-</select>
-<input type="submit" value="Remove" />
-</form>
+	<legend>Remove a ztamp from your account</legend>
+	<!-- <em>No confirmation, so... be careful!</em><br /> -->
+	<form method="post">
+		<select name="zid_rm">
+		    <?php
+		    $ztamps = $ojnAPI->getListOfZtamps(true);
+		    if(!empty($ztamps))
+		        foreach($ztamps as $id => $ztamp) { ?>
+		        <option value="<?php echo $id; ?>"><?php echo $ztamp; ?> (<?php echo $id; ?>)</option>
+		    <?php } ?>
+		</select>
+		<input type="submit" value="Remove" onclick="javascript:return confirm('Are you sure you want to remove this Ztamp ?')" />
+	</form>
 </fieldset>
+
 <?php 
 $lng = $ojnAPI->getApiString("accounts/getlanguage?login=".$_SESSION['login']."&".$ojnAPI->getToken());
 $lng = $lng['value'];
 ?>
+
+
 <fieldset>
-<legend>Language</legend>
-<form method="post">
-<select name="lng">
-<option value="en"<?php if($lng == 'en') { ?> selected="selected"<?php } ?>>English</option>
-<option value="fr"<?php if($lng == 'fr') { ?> selected="selected"<?php } ?>>French</option>
-</select><br />
-<input type="submit" value="Apply" />
-</form>
+	<legend>Language</legend>
+	<form method="post">
+		<select name="lng">
+			<option value="en"<?php if($lng == 'en') { ?> selected="selected"<?php } ?>>English</option>
+			<option value="fr"<?php if($lng == 'fr') { ?> selected="selected"<?php } ?>>French</option>
+		</select>
+		<input type="submit" value="Apply" />
+	</form>
 </fieldset>
+
+
 <fieldset>
-<legend>Change your password</legend>
-<form method="post">
-<label>New password <input type="password" name="npwd" /></label><br />
-<label>Confirm <input type="password" name="npwd2" /></label><br />
-<input type="submit" value="Apply" />
-</form>
+	<legend>Change your password</legend>
+	<form method="post">
+		<span class="fieldName">New password</span><input type="password" name="npwd" /><br />
+		<span class="fieldName">Confirm</span><input type="password" name="npwd2" /> 
+		<input type="submit" value="Apply" />
+	</form>
 </fieldset>
+
 <?php
 require_once "include/append.php";
 ?>

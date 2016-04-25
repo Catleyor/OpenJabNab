@@ -7,8 +7,8 @@ if(!empty($_POST['text'])) {
 ?>
 <form method="post">
 <fieldset>
-<legend>Texte a envoyer &aacute; tous les lapins</legend>
-<input type="text" name="text" value="">
-<input type="submit" value="Enregistrer">
+	<legend>Texte a envoyer &aacute; tous les lapins</legend>
+	<input type="text" name="text" value="" size=70>
+	<input type="submit" value="Enregistrer">
 </fieldset>
 </form>

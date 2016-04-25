@@ -8,7 +8,8 @@ if(!empty($_POST['text'])) {
 <form method="post">
 <fieldset>
 <legend>Texte a envoyer</legend>
-<input type="text" name="text" value="">
+<textarea name="text" value="" cols=80 rows=5></textarea><br />
+<br />
 <input type="submit" value="Enregistrer">
 </fieldset>
 </form>

@@ -13,22 +13,23 @@ if(!empty($_POST['a']) && !empty($_POST['tag'])) {
 }
 ?>
 <form method="post">
-<fieldset>
-<legend>Actions</legend>
-<input type="radio" name="a" value="addtag" checked="true" /> Play file
-<select name="mfile">
-<option value=""></option>
+	<fieldset>
+		<legend>Actions</legend>
+		<span class="fieldName">Play file</span><input type="radio" name="a" value="addtag" checked="true" /> 
+		<select name="mfile">
+			<option value=""></option>
 <?php foreach($Files as $f) { ?>
-<option value="<?php echo $f; ?>"><?php echo ucfirst(substr($f,0,-4)); ?></option>
+			<option value="<?php echo $f; ?>"><?php echo ucfirst(substr($f,0,-4)); ?></option>
 <?php } ?>
-</select>
-<input type="radio" name="a" value="rmtag" /> Remove association<br /><br />
-for Ztamp: <select name="tag">
-    <option value=""></option>
-	<?php foreach($Ztamps as $k=>$v): ?>
-	<option value="<?php echo $k; ?>"><?php echo $v; ?> (<?php echo $k; ?>)</option>
-	<?php endforeach; ?>
-	</select>
-<input type="submit" value="Enregister">
+		</select><br />
+
+		<span class="fieldName">Remove association</span><input type="radio" name="a" value="rmtag" /><br /><br />
+		<span class="fieldName">for Ztam</span> <select name="tag">
+    		<option value=""></option>
+<?php foreach($Ztamps as $k=>$v): ?>
+			<option value="<?php echo $k; ?>"><?php echo $v; ?> (<?php echo $k; ?>)</option>
+<?php endforeach; ?>
+		</select>
+		<input type="submit" value="Enregister">
 </fieldset>
 </form>

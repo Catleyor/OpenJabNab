@@ -61,48 +61,64 @@ $lang = isset($lang['value']) ? (string)($lang['value']) : 'fr';
 ?>
 <form method="post">
 <fieldset>
-<legend>Actions</legend>
-<input type="radio" name="a" value="addcity" /> Add a city<input type="text" name="addC"><br />
-<input type="radio" name="a" value="webcast" /> Add a webcast at (hh:mm) <input type="text" name="webcastT" maxlength="5" style="width:50px" /> for city <select name="webcastC">
-	<option value=""></option>
+	<legend>Actions</legend>
+	<span class="fieldName">Add a city <input type="radio" name="a" value="addcity" /></span>Name: <input type="text" name="addC"><br />
+
+	<hr />
+	<span class="fieldName">Add a webcast <input type="radio" name="a" value="webcast" /></span>at: <input type="text" name="webcastT" maxlength="5" style="width:50px" /> <i>(hh:mm)</i> &nbsp;&nbsp;&nbsp;&nbsp; for city: 
+	<select name="webcastC">
+		<option value=""></option>
 	<?php if(!empty($pList))
 	foreach($pList as $item) { ?>
 		<option value="<?php echo urldecode($item) ?>"><?php echo urldecode($item); ?></option>
 	<?php } ?>
-</select><br />
-<input type="radio" name="a" value="rfidadd" /> Add RFID action for <select name="RfCity">
-	<option value=""></option>
+	</select><br />
+
+	<hr />
+	<span class="fieldName">Add RFID action<input type="radio" name="a" value="rfidadd" /></span>for: 
+	<select name="RfCity">
+		<option value=""></option>
 	<?php  if(!empty($pList))
 	foreach($pList as $item) { ?>
 		<option value="<?php echo urldecode($item) ?>"><?php echo urldecode($item); ?></option>
 	<?php } ?>
 </select> on Ztamp: <select name="Tag_Rfa">
-    <option value=""></option>
+    	<option value=""></option>
 	<?php foreach($Ztamps as $k=>$v): ?>
-	<option value="<?php echo $k; ?>"><?php echo $v; ?> (<?php echo $k; ?>)</option>
+		<option value="<?php echo $k; ?>"><?php echo $v; ?> (<?php echo $k; ?>)</option>
 	<?php endforeach; ?>
 	</select><br />
-	<input type="radio" name="a" value="rfidd" /> Delete Ztamp association: <select name="Tag_Rf">
-    <option value=""></option>
+	
+	<hr />
+	<span class="fieldName">Delete Ztamp association<input type="radio" name="a" value="rfidd" /></span>for: 
+	<select name="Tag_Rf">
+		<option value=""></option>
 	<?php foreach($Ztamps as $k=>$v): ?>
-	<option value="<?php echo $k; ?>"><?php echo $v; ?> (<?php echo $k; ?>)</option>
+		<option value="<?php echo $k; ?>"><?php echo $v; ?> (<?php echo $k; ?>)</option>
 	<?php endforeach; ?>
 	</select><br />
-<input type="radio" name="a" value="setlang" /> Default Language (for weather infos only for now) <select name="Lang">
-	<option value=""></option>
+
+	<hr />
+	<span class="fieldName">Default Language <input type="radio" name="a" value="setlang" /></span>Language: 
+	<select name="Lang">
+		<option value=""></option>
 	<?php  if(!empty($Langs))
 	foreach($Langs as $k=>$v) { ?>
 		<option value="<?php echo urldecode($k) ?>" <?php echo ($lang == $k) ? 'selected="true"': ''; ?>><?php echo urldecode($v); ?></option>
 	<?php } ?>
-</select><br />
-<input type="submit" value="Enregister">
+	</select> (for weather infos only for now) <br />
+
+	<hr />
+	<input type="submit" value="Enregister">
+</fieldset>
+</form>
 
 <?php
 if(!empty($pList)) {
 ?>
+
 <hr />
-<center>
-<table style="width: 80%">
+<table class="tablePlugins" cellspacing=0>
 	<tr>
 		<th colspan="4">Cities</th>
 	</tr>
@@ -116,18 +132,19 @@ if(!empty($pList)) {
 ?>
 	<tr<?php echo $i++ % 2 ? " class='l2'" : "" ?>>
 		<td><?php echo urldecode($item) ?></td>
-		<td width="15%"><a href="bunny_plugin.php?p=weather&rp=<?php echo $item ?>">Remove</a></td>
-		<td width="15%"><?php if($default != $item) { ?><a href="bunny_plugin.php?p=weather&d=<?php echo $item ?>">Set as default</a><?php } else { ?>Default city<?php } ?></td>
+		<td width="20%" class="remove"><a href="bunny_plugin.php?p=weather&rp=<?php echo $item ?>">Remove</a></td>
+		<td width="20%" class="config"><?php if($default != $item) { ?><a href="bunny_plugin.php?p=weather&d=<?php echo $item ?>">Set as default</a><?php } else { ?>Default city<?php } ?></td>
 	</tr>
 <?php } ?>
 </table>
+
 <?php
 }
 if(isset($wList['list']->item)){
 ?>
+
 <hr />
-<center>
-<table style="width: 80%">
+<table class="tablePlugins" cellspacing=0>
 	<tr>
 		<th colspan="3">Webcast</th>
 	</tr>
@@ -143,10 +160,8 @@ if(isset($wList['list']->item)){
 	<tr<?php echo $i++ % 2 ? " class='l2'" : "" ?>>
 		<td><?php echo urldecode($item->key) ?></td>
 		<td><?php echo $item->value ?></td>
-		<td width="15%"><a href="bunny_plugin.php?p=weather&rw=<?php echo $item->key ?>">Remove</a></td>
+		<td width="20%" class="remove"><a href="bunny_plugin.php?p=weather&rw=<?php echo $item->key ?>">Remove</a></td>
 	</tr>
 <?php  } ?>
 </table>
 <?php } ?>
-</fieldset>
-</form>

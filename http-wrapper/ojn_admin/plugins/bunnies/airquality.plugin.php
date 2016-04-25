@@ -15,10 +15,12 @@ else if(!empty($_GET['rmwbc'])) {
 ?>
 <form method="post">
 <fieldset>
-<legend>Actions</legend>
-<input type="radio" name="a" value="addwbc" checked="true" /> Add Webcast<br />
-<input type="radio" name="a" value="rmwbc" /> Remove Webcast<br /><br />
-Time:<input type="text" name="airqualitytime" /> City :<select name="airqualitycity">
+	<legend>Actions</legend>
+	<span class="fieldName">Webcast</span><input type="radio" name="a" value="addwbc" checked="true" /> Add<br />
+	<span class="fieldName"></span><input type="radio" name="a" value="rmwbc" /> Remove<br /><br />
+
+	<span class="fieldName">Time</span><input type="text" name="airqualitytime" /><br />
+	<span class="fieldName">City</span><select name="airqualitycity">
 <?php
 $cities = $ojnAPI->getApiList("bunny/".$_SESSION['bunny']."/airquality/getcitieslist?".$ojnAPI->getToken());
 sort($cities);
@@ -37,8 +39,8 @@ $webcasts = $ojnAPI->getApiList("bunny/".$_SESSION['bunny']."/airquality/getwebc
 if($webcasts){
 ?>
 <hr />
-<center>
-<table style="width: 80%">
+
+	<table class="tablePlugins" cellspacing=0>
 	<tr>
 		<th colspan="3">Webcast</th>
 	</tr>
@@ -54,10 +56,11 @@ if($webcasts){
 	<tr<?php echo $i++ % 2 ? " class='l2'" : "" ?>>
 		<td><?php echo urldecode($item->key) ?></td>
 		<td><?php echo $item->value ?></td>
-		<td width="15%"><a href="bunny_plugin.php?p=airquality&rmwbc=<?php echo $item->key ?>">Remove</a></td>
+		<td width="15%" class="remove"><a href="bunny_plugin.php?p=airquality&rmwbc=<?php echo $item->key ?>">Remove</a></td>
 	</tr>
 <?php  } ?>
-</table>
+	</table>
+
 <?php } ?>
 
 </fieldset>

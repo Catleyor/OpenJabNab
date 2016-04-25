@@ -27,10 +27,12 @@ if((!empty($_GET['plug']) && !empty($_GET['stat'])) || (!empty($_POST['plug']) &
 }
 
 ?>
+<div id="pageServer">
 <h1 id="config">Configuration du serveur</h1>
 <p>
 Voici la liste des plugins disponibles sur ce serveur. A partir de cette page, il est possible de les activer, les d&eacute;sactiver, ou encore les configurer pour ceux qui poss&egrave;dent des options &agrave; r&eacute;gler. Certains plugins ne peuvent pas &ecirc;tre d&eacute;sactiv&eacute;s car ils sont n&eacute;cessaires au bon fonctionnement du serveur.
 </p>
+
 <?php
 if(isset($_SESSION['message']) && empty($_GET)) {
 	if(isset($_SESSION['message']['ok'])) { ?>
@@ -59,77 +61,77 @@ if(isset($_SESSION['message']) && empty($_GET)) {
 		$SPlugins = $ojnAPI->getApiList("plugins/getListOfSystemPlugins?".$ojnAPI->getToken());
 		$RPlugins = $ojnAPI->getApiList("plugins/getListOfRequiredPlugins?".$ojnAPI->getToken());
 ?>
-<center>
-<table style="width: 80%">
-	<tr>
-		<th>Required Plugins</th>
-		<th colspan="2">Actions</th>
-	</tr>
+
+
+	<table class="tablePlugins">
+		<tr>
+			<th>Required Plugins</th>
+			<th colspan="2">Actions</th>
+		</tr>
 <?php
 	$i = 0;
 	foreach($RPlugins as $p){
 ?>
-	<tr<?php echo $i++ % 2 ? " class='l2'" : "" ?>>
-		<td><?php echo $Plugins[$p]; ?></td>
-		<td width="21%"><a href="server_plugin.php?p=<?php echo $p; ?>">Setup</a></td>
-		<td width="21%"><?php if($Plugins[$p][1]): ?><a href="?stat=reload&plug=<?php echo $p ?>">Reload</a><?php endif; ?></td>
-	</tr>
+		<tr<?php echo $i++ % 2 ? " class='l2'" : "" ?>>
+			<td><?php echo $Plugins[$p]; ?></td>
+			<td width="21%" class="config"><a href="server_plugin.php?p=<?php echo $p; ?>">Setup</a></td>
+			<td width="21%" class="reload"><?php if($Plugins[$p][1]): ?><a href="?stat=reload&plug=<?php echo $p ?>">Reload</a><?php endif; ?></td>
+		</tr>
 <?php } ?>
-</table>
+	</table>
 
-<table style="width: 80%">
-	<tr>
-		<th>System Plugins</th>
-		<th colspan="3">Actions</th>
-	</tr>
+	<table class="tablePlugins">
+		<tr>
+			<th>System Plugins</th>
+			<th colspan="3">Actions</th>
+		</tr>
 <?php
 	$i = 0;
 	foreach($SPlugins as $p){
 ?>
-	<tr<?php echo $i++ % 2 ? " class='l2'" : "" ?>>
-		<td><?php echo $Plugins[$p]; ?></td>
-		<td width="14%"><a href="server_plugin.php?p=<?php echo $p; ?>">Setup</a></td>
-		<td <?php echo in_array($p,$APlugins) ? 'width="14%"' : 'colspan="2"'; ?>><a href="?stat=<?php echo in_array($p,$APlugins) ? "deactivate" : "activate"; ?>&plug=<?php echo $p ?>"><?php echo in_array($p,$APlugins) ? "Dea" : "A"; ?>ctivate plugin</a>
-		<?php if(in_array($p,$APlugins)): ?><td width="14%"><a href="?stat=reload&plug=<?php echo $p ?>">Reload</a></td><?php endif; ?>
-	</tr>
+		<tr<?php echo $i++ % 2 ? " class='l2'" : "" ?>>
+			<td><?php echo $Plugins[$p]; ?></td>
+			<td width="14%" class="config"><a href="server_plugin.php?p=<?php echo $p; ?>">Setup</a></td>
+			<td <?php echo in_array($p,$APlugins) ? 'width="14%" class="remove"' : 'colspan="2"  class="add"'; ?>><a href="?stat=<?php echo in_array($p,$APlugins) ? "deactivate" : "activate"; ?>&plug=<?php echo $p ?>"><?php echo in_array($p,$APlugins) ? "Dea" : "A"; ?>ctivate</a>
+		<?php if(in_array($p,$APlugins)): ?><td width="14%" class="reload"><a href="?stat=reload&plug=<?php echo $p ?>">Reload</a></td><?php endif; ?>
+		</tr>
 <?php } ?>
-</table>
+	</table>
 
-<table style="width: 80%">
-	<tr>
-		<th>Bunnies &amp; Ztamps Plugins</th>
-		<th colspan="3">Actions</th>
-	</tr>
+	<table class="tablePlugins">
+		<tr>
+			<th>Bunnies &amp; Ztamps Plugins</th>
+			<th colspan="3">Actions</th>
+		</tr>
 <?php
 	$i = 0;
     if(!empty($UPlugins))
 	foreach($UPlugins as $p){
 ?>
-	<tr<?php echo $i++ % 2 ? " class='l2'" : "" ?>>
-		<td><?php echo $Plugins[$p]; ?></td>
-		<td width="14%"><a href="server_plugin.php?p=<?php echo $p; ?>">Setup</a></td>
-		<td <?php echo in_array($p,$APlugins) ? 'width="14%"' : 'colspan="2"'; ?> ><a href="?stat=<?php echo in_array($p,$APlugins) ? "deactivate" : "activate"; ?>&plug=<?php echo $p ?>"><?php echo in_array($p,$APlugins) ? "Dea" : "A"; ?>ctivate plugin</a>
-		<?php if(in_array($p,$APlugins)): ?></td><td width="14%"><a href="?stat=reload&plug=<?php echo $p ?>">Reload</a><?php endif; ?>
-		</td>
-	</tr>
+		<tr<?php echo $i++ % 2 ? " class='l2'" : "" ?>>
+			<td><?php echo $Plugins[$p]; ?></td>
+			<td width="14%" class="config"><a href="server_plugin.php?p=<?php echo $p; ?>">Setup</a></td>
+			<td <?php echo in_array($p,$APlugins) ? 'width="14%" class="remove"' : 'colspan="2" class="add"'; ?> ><a href="?stat=<?php echo in_array($p,$APlugins) ? "deactivate" : "activate"; ?>&plug=<?php echo $p ?>"><?php echo in_array($p,$APlugins) ? "Dea" : "A"; ?>ctivate</a>
+			<?php if(in_array($p,$APlugins)): ?></td><td width="14%" class="reload"><a href="?stat=reload&plug=<?php echo $p ?>">Reload</a><?php endif; ?>
+			</td>
+		</tr>
 <?php } ?>
-</table>
+	</table>
 
-</p>
-<p id="tableBunnyPluginServer">
-</p>
-</center>
+
+	<p id="tableBunnyPluginServer"></p>
+
+
 <h1 id="bunnies">Liste des lapins connect&eacute;s</h1>
-<p>Voici la liste des lapins connect&eacute;s sur ce serveur.
-</p>
-<center>
-<table style="width: 80%">
-	<tr>
-		<th>MAC</th>
-		<th>Nom</th>
-		<th>Statut</th>
-		<th>Actions</th>
-	</tr>
+<p>Voici la liste des lapins connect&eacute;s sur ce serveur.</p>
+
+	<table class="tablePlugins">
+		<tr>
+			<th>MAC</th>
+			<th>Nom</th>
+			<th>Statut</th>
+			<th>Actions</th>
+		</tr>
 <?php
 	$i = 0;
 	$cbunnies = $ojnAPI->getApiMapped("bunnies/getListofAllConnectedBunnies?".$ojnAPI->getToken());
@@ -137,50 +139,51 @@ if(isset($_SESSION['message']) && empty($_GET)) {
     if(!empty($bunnies))
 	foreach($bunnies as $mac=>$name){
 ?>
-	<tr<?php echo $i++ % 2 ? " class='l2'" : "" ?>>
-		<td width="20%"><?php echo $mac; ?></td>
-		<td><?php echo $name; ?></td>
-		<td width="20%"><?php	echo isset($cbunnies[$mac]) ? 'C': 'D&eacute;c' ?>onnect&eacute;</td>
-		<td width="20%"><a href='bunny.php?b=<?php echo $mac; ?>'>Configurer</a>&nbsp;<a href='server.php?removeB=<?php echo $mac; ?>'>Remove</a></td>
-	</tr>
+		<tr<?php echo $i++ % 2 ? " class='l2'" : "" ?>>
+			<td width="20%"><?php echo $mac; ?></td>
+			<td><?php echo $name; ?></td>
+			<td width="20%"><?php	echo isset($cbunnies[$mac]) ? 'C': 'D&eacute;c' ?>onnect&eacute;</td>
+			<td width="20%" class="config"><a href='bunny.php?b=<?php echo $mac; ?>'>Configurer</a>&nbsp;<a href='server.php?removeB=<?php echo $mac; ?>'>Remove</a></td>
+		</tr>
 <?php } ?>
-</table>
-</center>
+	</table>
+
+
 
 <h1 id="ztamps">Liste des Ztamps</h1>
 <p>Voici la liste des ztamps enregistr&eacute;s sur ce serveur.</p>
-<center>
-<table style="width: 80%">
-	<tr>
-		<th>ID</th>
-		<th>Nom</th>
-		<th>Actions</th>
-	</tr>
+
+	<table class="tablePlugins">
+		<tr>
+			<th>ID</th>
+			<th>Nom</th>
+			<th>Actions</th>
+		</tr>
 <?php
 	$i = 0;
 	$Ztamps = $ojnAPI->getApiMapped("ztamps/getListOfAllZtamps?".$ojnAPI->getToken());
     if(!empty($Ztamps))
 	foreach($Ztamps as $id=>$name){
 ?>
-	<tr<?php echo $i++ % 2 ? " class='l2'" : "" ?>>
-		<td width="20%"><?php echo $id; ?></td>
-		<td><?php echo $name; ?></td>
-		<td width="20%"><a href='ztamp.php?z=<?php echo $id; ?>'>Configurer</a>
-	</tr>
+		<tr<?php echo $i++ % 2 ? " class='l2'" : "" ?>>
+			<td width="20%"><?php echo $id; ?></td>
+			<td><?php echo $name; ?></td>
+			<td width="20%" class="config"><a href='ztamp.php?z=<?php echo $id; ?>'>Configurer</a>
+		</tr>
 <?php } ?>
-</table>
-</center>
+	</table>
+
 
 <h1 id="userlist">Liste des Utilisateurs</h1>
 <p>Voici la liste des comptes enregistr&eacute;s sur ce serveur.</p>
-<center>
-<table style="width: 80%">
+<table class="tablePlugins">
 	<tr>
 		<th>Login</th>
 		<th>Username</th>
 		<th>Statut</th>
 		<th>Actions</th>
 	</tr>
+
 <?php
 	$i = 0;
 	$Users = $ojnAPI->getApiMapped("accounts/GetUserlist?".$ojnAPI->getToken());
@@ -196,9 +199,8 @@ if(isset($_SESSION['message']) && empty($_GET)) {
 		<td><a href="server.php?removeA=<?php echo $l; ?>">Remove</a></td>
 	</tr>
 <?php } ?>
-</table>
-</center>
-
+	</table>
+</div>
 <?php
 require_once 'include/append.php'
 ?>

@@ -568,24 +568,24 @@ $wList = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/ratp/getwebcastslis
 ?>
 <form method="post">
 <fieldset>
-<legend>Ajouter un arrêt</legend>
-Réseau : <select name="addReseau">
+	<legend>Ajouter un arrêt</legend>
+	<span class="fieldName">Réseau</span><select name="addReseau">
 <?php
 foreach($reseau as $a => $value){
-		echo "<option name=\"".$a."\" ".($a==$_POST['addReseau']?"selected=\"selected\"":"").">".$a."</option>";
+		echo "		<option name=\"".$a."\" ".($a==$_POST['addReseau']?"selected=\"selected\"":"").">".$a."</option>\n";
 }
 ?>
-</select>
-<input type="submit" value="refresh" name="a"  />
+	</select>
+	<input type="submit" value="refresh" name="a" class="buttonRefresh" />
 <br />
-Ligne : 
+<span class="fieldName">Ligne</span>
 <?php
 if(isset($_POST['addReseau']) && $_POST['addReseau'] != ""){
 	echo "<select name=\"addLigne\">";
 	foreach($reseau[$_POST['addReseau']] as $a => $value){
-		echo "<option name=\"".$value."\" ".($value==$_POST['addLigne']?"selected=\"selected\"":"").">".$value."</option>";
+		echo "		<option name=\"".$value."\" ".($value==$_POST['addLigne']?"selected=\"selected\"":"").">".$value."</option>\n";
 	}
-	echo '</select><input type="submit" value="refresh" /><br />';
+	echo '</select><input type="submit" value="refresh" class="buttonRefresh" /><br />';
 }
 else{
 ?>
@@ -593,12 +593,13 @@ else{
 <?php
 }
 ?>
-Arrêt
+
+<span class="fieldName">Arrêt</span>
 <?php
 if(isset($_POST['addReseau']) && isset($_POST['addLigne']) && $_POST['addLigne'] != ""){
 	echo "<select name=\"addArret\">";
 	foreach($arret[$_POST['addLigne']] as $a => $value){
-		echo "<option value=\"".$a."\">".$value."</option>";		
+		echo "		<option value=\"".$a."\">".$value."</option>\n";		
 	}
 	echo '</select><br />';
 }
@@ -608,7 +609,8 @@ else{
 <?php
 }
 ?>
-Direction : 
+
+	<span class="fieldName">Direction</span>
 <?php
 if(isset($_POST['addReseau']) && isset($_POST['addLigne']) && $_POST['addLigne'] != ""){
 	echo "<select name=\"addDirection\">";
@@ -627,47 +629,63 @@ if(isset($_POST['addReseau']) && isset($_POST['addLigne']) && $_POST['addLigne']
 	echo '<input type="submit" name ="z" value="Ajouter" />';
 }
 ?>
-<br /><br />
 </fieldset>
 </form>
+
+
 <form method="post">
 <fieldset>
-<legend>Actions</legend>
-<input type="radio" name="a" value="webcast" /> Ajouter un webcast (hh:mm) <input type="text" name="webcastT" maxlength="5" style="width:50px" /> pour l'arrêt <select name="webcastC">
-	<option value=""></option>
+	<legend>Actions</legend>
+
+	<span class="fieldName">Ajouter un webcast <input type="radio" name="a" value="webcast" /></span>(hh:mm) <input type="text" name="webcastT" maxlength="5" style="width:50px" /> pour l'arrêt 
+	<select name="webcastC">
+		<option value=""></option>
 	<?php if(!empty($pList))
 	foreach($pList as $item) { ?>
 		<option value="<?php echo urldecode($item) ?>"><?php echo urldecode($item); ?></option>
 	<?php } ?>
-</select><br />
-<input type="radio" name="a" value="rfidadd" /> Ajouter une action RFID pour <select name="item">
-	<option value=""></option>
+	</select><br />
+
+<hr>
+
+	<span class="fieldName">Ajouter une action RFID <input type="radio" name="a" value="rfidadd" /></span>pour 
+	<select name="item">
+		<option value=""></option>
 	<?php  if(!empty($pList))
 	foreach($pList as $item) { 
 		$tmp = explode("|", urldecode($item));
 		?>
 		<option value="<?php echo urldecode($item) ?>"><?php echo $tmp[0]." - ".$tmp[1]." - ".$arret[$tmp[1]][$tmp[2]]." - ".$direction[$tmp[1]][$tmp[3]]; ?></option>
 	<?php } ?>
-</select> avec le Ztamp: <select name="Tag_Rfa">
-    <option value=""></option>
+	</select> <br />
+	
+	<span class="fieldName"></span>avec le Ztamp: 
+	<select name="Tag_Rfa">
+    	<option value=""></option>
 	<?php foreach($Ztamps as $k=>$v): ?>
-	<option value="<?php echo $k; ?>"><?php echo $v; ?> (<?php echo $k; ?>)</option>
+		<option value="<?php echo $k; ?>"><?php echo $v; ?> (<?php echo $k; ?>)</option>
 	<?php endforeach; ?>
 	</select><br />
-	<input type="radio" name="a" value="rfidd" /> Supprimer l'association avec le ZTamp: <select name="Tag_Rf">
-    <option value=""></option>
+
+<hr>
+
+	<span class="fieldName">Supprimer l'association <input type="radio" name="a" value="rfidd" /></span>avec le ZTamp: 
+	<select name="Tag_Rf">
+    	<option value=""></option>
 	<?php foreach($Ztamps as $k=>$v): ?>
-	<option value="<?php echo $k; ?>"><?php echo $v; ?> (<?php echo $k; ?>)</option>
+		<option value="<?php echo $k; ?>"><?php echo $v; ?> (<?php echo $k; ?>)</option>
 	<?php endforeach; ?>
 	</select><br />
-<input type="submit" value="Enregister">
+	<input type="submit" value="Enregister">
+</fieldset>
+</form>
 
 <?php
 if(!empty($pList)) {
 ?>
 <hr />
-<center>
-<table style="width: 80%">
+
+<table class="tablePlugins" cellspacing=0>
 	<tr>
 		<th colspan="6">Les arrets</th>
 	</tr>
@@ -688,18 +706,20 @@ if(!empty($pList)) {
 		<td><?php echo $tmp[1]; ?></td>
 		<td><?php echo $arret[$tmp[1]][$tmp[2]]; ?></td>
 		<td><?php echo $direction[$tmp[1]][$tmp[3]]; ?></td>
-		<td width="15%"><a href="bunny_plugin.php?p=ratp&ra=<?php echo $item ?>">Remove</a></td>
-		<td width="15%"><?php if($default != $item) { ?><a href="bunny_plugin.php?p=ratp&d=<?php echo $item ?>">Set as default</a><?php } else { ?>Default Stop<?php } ?></td>
+		<td width="15%" class="remove"><a href="bunny_plugin.php?p=ratp&ra=<?php echo $item ?>">Remove</a></td>
+		<td width="15%" class="config"><?php if($default != $item) { ?><a href="bunny_plugin.php?p=ratp&d=<?php echo $item ?>">Set as default</a><?php } else { ?><b>Default Stop</b><?php } ?></td>
 	</tr>
 <?php } ?>
 </table>
+
 <?php
 }
 if(isset($wList['list']->item)){
 ?>
+
 <hr />
-<center>
-<table style="width: 80%">
+
+<table class="tablePlugins" cellspacing=0>
 	<tr>
 		<th colspan="3">Webcast</th>
 	</tr>
@@ -715,10 +735,10 @@ if(isset($wList['list']->item)){
 	<tr<?php echo $i++ % 2 ? " class='l2'" : "" ?>>
 		<td><?php echo urldecode($item->key) ?></td>
 		<td><?php echo $item->value ?></td>
-		<td width="15%"><a href="bunny_plugin.php?p=ratp&rw=<?php echo $item->key ?>">Remove</a></td>
+		<td width="15%" class="remove"><a href="bunny_plugin.php?p=ratp&rw=<?php echo $item->key ?>">Remove</a></td>
 	</tr>
 <?php  } ?>
+
 </table>
+
 <?php } ?>
-</fieldset>
-</form>

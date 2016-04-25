@@ -2,3 +2,11 @@ Makefile
 bin/
 tmp/
 ojn_local/
+
+# OS generated files #
+######################
+.DS_Store?
+ehthumbs.db
+Icon?
+Thumbs.db
+.AppleDouble/

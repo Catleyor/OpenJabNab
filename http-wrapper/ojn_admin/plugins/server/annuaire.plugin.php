@@ -10,8 +10,8 @@ $url = isset($url['value']) ? $url['value'] : '';
 
 <form method="post">
 <fieldset>
-<legend>Set central directory URL</legend>
-URL<input type="text" name="url" value="<?php echo $url; ?>" />
-<input type="submit" value="Enregistrer">
+	<legend>Set central directory URL</legend>
+	URL: <input type="text" name="url" value="<?php echo $url; ?>" />
+	<input type="submit" value="Enregistrer">
 </fieldset>
 </form>

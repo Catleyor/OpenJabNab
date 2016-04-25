@@ -10,8 +10,8 @@ $list = implode(',', $list);
 
 <form method="post">
 <fieldset>
-<legend>Set flux list (comma separated, without spaces)</legend>
-URL<input type="text" name="list" value="<?php echo $list; ?>" style="width:400px"/>
-<input type="submit" value="Enregistrer">
+	<legend>Set flux list (comma separated, without spaces)</legend>
+	URL: <input type="text" name="list" value="<?php echo $list; ?>" style="width:400px"/>
+	<input type="submit" value="Enregistrer">
 </fieldset>
 </form>

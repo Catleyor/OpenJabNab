@@ -1,7 +1,7 @@
 <?php
 if(!file_exists("include/common.php"))
 	header('Location: install.php');
-require_once "include/common.php";
+	require_once "include/common.php";
 
 if(isset($_GET['logout'])) {
 	unset($_SESSION['bunny']);
@@ -13,6 +13,7 @@ if(isset($_GET['logout'])) {
 	unset($_SESSION['token']);
 	header("Location: index.php");
 }
+
 if(!empty($_POST['login']) && !empty($_POST['password'])) {
 	$r = $ojnAPI->loginAccount($_POST['login'], $_POST['password']);
 	if(!strpos($r,"AD_")) {
@@ -25,6 +26,8 @@ if(!empty($_POST['login']) && !empty($_POST['password'])) {
 	header("Location: index.php");
 }
 ?>
+<div id="pageIndex">
+
 <?php
 if(isset($_SESSION['message']) && empty($_GET)) {
 	if(isset($_SESSION['message']['ok'])) { ?>
@@ -39,41 +42,54 @@ if(isset($_SESSION['message']) && empty($_GET)) {
 	echo "</div>";
 }
 ?>
-<div class="three_cols">
-      <h1 id="accueil">Home</h1>
-      <p>Bienvenue sur la page de configuration de votre nabaztag sur openJabNab. Vous avez la possibilit&eacute;
+	<div class="intro">
+		<h1 id="accueil">Home</h1>
+		<p>Bienvenue sur la page de configuration de votre nabaztag sur openJabNab. Vous avez la possibilit&eacute;
          d'activer ou de d&eacute;sactiver certains plugins, afin que votre lapin r&eacute;ponde pleinement
 	 &agrave; vos besoins. De plus, il est possible de planifier l'ex&eacute;cution de t&acirc;ches r&eacute;currentes.</p>
-</div>
+	</div>
 
-<div class="three_cols">
+	<div class="indexBoxes">
+
+		<div class="box">
 <?php
 if(isset($_SESSION['token'])) {
 ?>
-<h1>D&eacute;connexion</h1>
-Cliquez sur le lien suivant pour vous d&eacute;connecter : <a href="index.php?logout">D&eacute;connexion</a>
+			<h1>D&eacute;connexion</h1>
+			<br/>
+			Cliquez sur le lien suivant pour vous d&eacute;connecter:<br />
+			<br/>
+			<br/>
+			<a href="index.php?logout" class="button buttonBig">D&eacute;connexion</a>
 <?php
-} else {
+} 
+else {
 ?>
-      <h1 id="tutorial">Connexion</h1>
-      <form method="post">
-	<dl>
-	<dt>Login</dt>
-	<dd><input type="text" name="login"></dd>
-	<dt>Mot de passe</dt>
-	<dd><input type="password" name="password"></dd>
-	</dl>
-	<input type="submit" value="Se connecter">
-	</form>
+			<h1 id="tutorial">Connexion</h1>
+			<form method="post">
+				<dl>
+					<dt>Login</dt>			<dd><input type="text" name="login"></dd>
+					<dt>Mot de passe</dt>	<dd><input type="password" name="password"></dd>
+				</dl>
+			<div class='indexSubmit'><input type="submit" value="Se connecter"></div>
+			</form>
+
+		</div>
+
+		<div class="box">
+			<h1 id="tutorial">New account</h1>
+			<p>Si vous voulez utiliser votre lapin, mais que vous n'avez pas de compte utilisateur, vous pouvez en cr&eacute;er un en cliquant sur le lien suivant : <br />
+				<br />
+				<a href="register.php" class="button buttonBig">Cr&eacute;er un compte utilisateur</a>.
+			</p>
+
 <?php
 }
 ?>
+		</div>
+	</div>
 </div>
 
-<div class="three_cols">
-      <h1 id="tutorial">New account</h1>
-<p>Si vous voulez utiliser votre lapin, mais que vous n'avez pas de compte utilisateur, vous pouvez en cr&eacute;er un en cliquant sur le lien suivant : <a href="register.php">Cr&eacute;er un compte utilisateur</a>.</p>
-</div>
 <?php
 require_once("include/append.php");
 ?>

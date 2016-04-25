@@ -41,61 +41,82 @@ $default = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/wizzflux/getdefau
 $default = isset($default['value']) ? (string)($default['value']) : '';
 $wList = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/wizzflux/listwebcast?".$ojnAPI->getToken());
 ?>
+
 <form method="post">
 <fieldset>
-<legend>Actions</legend>
-<input type="radio" name="a" value="play" /> Play <select name="playN">
-	<option value=""></option>
-	<?php if(!empty($FList))
-        foreach($FList as $item) { ?>
+	<legend>Actions</legend>
+
+	<span class="fieldName">Play <input type="radio" name="a" value="play" /></span>Flux: 
+	<select name="playN">
+		<option value=""></option>
+<?php if(!empty($FList))
+	foreach($FList as $item) { ?>
 		<option value="<?php echo $item; ?>"><?php echo ucfirst($item); ?></option>
-	<?php } ?>
-</select><br />
-<input type="radio" name="a" value="default" /> Set default flux <select name="d">
-	<?php if(!empty($FList))
-        foreach($FList as $item) { ?>
-		<option value="<?php echo $item; ?>" <?php echo $default == $item ? 'selected="selected"' : ''; ?>><?php echo ucfirst($item); ?></option>
-	<?php } ?>
-</select><br />
-<input type="radio" name="a" value="webcast" /> Add a webcast at (hh:mm) <input type="text" name="webcastT" maxlength="5" style="width:50px" /> for flux <select name="webcastP">
+<?php } ?>
+	</select><br />
+
+	<hr />
+	<span class="fieldName">Set default flux <input type="radio" name="a" value="default" /></span>Flux: 
+		<select name="d">
+<?php if(!empty($FList))
+	foreach($FList as $item) { ?>
+			<option value="<?php echo $item; ?>" <?php echo $default == $item ? 'selected="selected"' : ''; ?>><?php echo ucfirst($item); ?></option>
+<?php } ?>
+		</select><br />
+
+	<hr />
+	<span class="fieldName">Add a webcast <input type="radio" name="a" value="webcast" /></span>at: <input type="text" name="webcastT" maxlength="5" style="width:50px" /> <i>(hh:mm)</i> &nbsp;&nbsp;&nbsp; for flux <select name="webcastP">
 	<option value=""></option>
 <?php if(!empty($FList))
         foreach($FList as $item) { ?>
 		<option value="<?php echo $item; ?>"><?php echo ucfirst($item); ?></option>
 	<?php } ?>
 </select><br />
-<input type="radio" name="a" value="rfidplay" /> Play flux <select name="PresetN_Rfp">
-	<option value=""></option>
-	<?php if(!empty($FList))
-        foreach($FList as $item) { ?>
+
+	<hr />
+	<span class="fieldName">Play flux <input type="radio" name="a" value="rfidplay" /></span>Flux: 
+	<select name="PresetN_Rfp">
+		<option value=""></option>
+<?php if(!empty($FList))
+	foreach($FList as $item) { ?>
 		<option value="<?php echo $item; ?>"><?php echo ucfirst($item); ?></option>
-	<?php } ?>
-</select> on Ztamp: <select name="Tag_Rfp">
-    <option value=""></option>
+<?php } ?>
+	</select> 
+ 	&nbsp;&nbsp;&nbsp;<br /> 
+	<span class="fieldName"></span>on Ztamp: 
+	<select name="Tag_Rfp">
+    	<option value=""></option>
+<?php foreach($Ztamps as $k=>$v): ?>
+		<option value="<?php echo $k; ?>"><?php echo $v; ?> (<?php echo $k; ?>)</option>
+<?php endforeach; ?>
+	</select><br />
+	
+	<hr />
+	<span class="fieldName">Delete Ztamp association <input type="radio" name="a" value="rfidd" /></span>Ztamp: 
+	<select name="Tag_Rfd">
+    	<option value=""></option>
 	<?php foreach($Ztamps as $k=>$v): ?>
-	<option value="<?php echo $k; ?>"><?php echo $v; ?> (<?php echo $k; ?>)</option>
+		<option value="<?php echo $k; ?>"><?php echo $v; ?> (<?php echo $k; ?>)</option>
 	<?php endforeach; ?>
 	</select><br />
-	<input type="radio" name="a" value="rfidd" /> Delete Ztamp association: <select name="Tag_Rfd">
-    <option value=""></option>
-	<?php foreach($Ztamps as $k=>$v): ?>
-	<option value="<?php echo $k; ?>"><?php echo $v; ?> (<?php echo $k; ?>)</option>
-	<?php endforeach; ?>
-	</select><br />
-<input type="submit" value="Enregister">
+
+	<hr />
+	<input type="submit" value="Enregister">
+</fieldset>
+</form>
 
 <?php
 if(isset($pList['list']->item)) {
 ?>
-<hr />
-<center>
+	<hr />
+
 <?php
 }
 if(isset($wList['list']->item)){
 ?>
 <hr />
-<center>
-<table style="width: 80%">
+
+<table class="tablePlugins" cellspacing=0>
 	<tr>
 		<th colspan="3">Webcast</th>
 	</tr>
@@ -111,10 +132,8 @@ if(isset($wList['list']->item)){
 	<tr<?php echo $i++ % 2 ? " class='l2'" : "" ?>>
 		<td><?php echo urldecode($item->key) ?></td>
 		<td><?php echo $item->value ?></td>
-		<td width="15%"><a href="bunny_plugin.php?p=wizzflux&rw=<?php echo $item->key ?>">Remove</a></td>
+		<td width="15%" class="remove"><a href="bunny_plugin.php?p=wizzflux&rw=<?php echo $item->key ?>">Remove</a></td>
 	</tr>
 <?php  } ?>
 </table>
 <?php } ?>
-</fieldset>
-</form>

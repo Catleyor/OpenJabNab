@@ -1,22 +1,28 @@
 <?php
 require_once "include/common.php";
+
 if(!isset($_SESSION['token']))
 	header('Location: index.php');
+
 if(!empty($_GET['b'])) {
-		$_SESSION['bunny'] = $_GET['b'];
-		$bunnies = $ojnAPI->getListOfBunnies(false);
-		$_SESSION['bunny_name'] = !empty($bunnies[$_GET['b']]) ? $bunnies[$_GET['b']] : '';
-		header("Location: bunny.php");
-} elseif(isset($_GET['resetpwd'])) {
+	$_SESSION['bunny'] = $_GET['b'];
+	$bunnies = $ojnAPI->getListOfBunnies(false);
+	$_SESSION['bunny_name'] = !empty($bunnies[$_GET['b']]) ? $bunnies[$_GET['b']] : '';
+	header("Location: bunny.php");
+} 
+elseif(isset($_GET['resetpwd'])) {
 	$_SESSION['message'] = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/resetPassword?".$ojnAPI->getToken());
 	header('Location: bunny.php');
-} elseif(isset($_GET['disconnect'])) {
+} 
+elseif(isset($_GET['disconnect'])) {
 	$_SESSION['message'] = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/disconnect?".$ojnAPI->getToken());
 	header('Location: bunny.php');
-} elseif(isset($_GET['resetown'])) {
+} 
+elseif(isset($_GET['resetown'])) {
 	$_SESSION['message'] = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/resetOwner?".$ojnAPI->getToken());
 	header('Location: bunny.php');
-} elseif(!empty($_GET['single']) && !empty($_GET['double'])) {
+} 
+elseif(!empty($_GET['single']) && !empty($_GET['double'])) {
 	$msg = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/setSingleClickPlugin?name=".$_GET['single']."&".$ojnAPI->getToken());
 	$msg1 = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/setDoubleClickPlugin?name=".$_GET['double']."&".$ojnAPI->getToken());
 	$s = isset($msg['error']) ? $msg['error'] : $msg['ok']. '<br />';
@@ -24,17 +30,19 @@ if(!empty($_GET['b'])) {
 	$msg = isset($msg['error']) || isset($msg1['error']) ? 'error' : 'ok';
 		$_SESSION['message'] = array($msg=>$s);
 	header('Location: bunny.php');
-}elseif((!empty($_GET['plug']) && !empty($_GET['stat'])) || (!empty($_POST['plug']) && !empty($_POST['stat']))) {
+}
+elseif((!empty($_GET['plug']) && !empty($_GET['stat'])) || (!empty($_POST['plug']) && !empty($_POST['stat']))) {
 	$a = !empty($_GET['stat']) ? $_GET : $_POST;
 	$function = $a['stat'] == 'register' ? 'register' : 'unregister';
 	$_SESSION['message'] = $ojnAPI->getApiString('bunny/'.$_SESSION['bunny'].'/'.$function.'Plugin?name='.$a['plug'].'&'.$ojnAPI->getToken());
 	header('Location: bunny.php');
-} else if(!empty($_GET['bunny_name'])) {
+} 
+elseif(!empty($_GET['bunny_name'])) {
 	$_SESSION['message'] = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/setBunnyName?name=".urlencode($_GET['bunny_name'])."&".$ojnAPI->getToken());
 	$_SESSION['bunny_name'] = $_GET['bunny_name'];
 	header('Location: bunny.php');
 }
-else if(!empty($_GET['pVAPI'])) {
+elseif(!empty($_GET['pVAPI'])) {
 	$pub = (int)$_GET['pVAPI'] - 1;
 	if($pub == 0 || $pub == 1)
 		$_SESSION['message'] = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/setPublicVAPI?public=".$pub."&".$ojnAPI->getToken());
@@ -42,7 +50,7 @@ else if(!empty($_GET['pVAPI'])) {
 		$_SESSION['message'] = "Error: Error in choice";
 	header("Location: bunny.php");
 }
-else if(!empty($_GET['aInsomniac'])) {
+elseif(!empty($_GET['aInsomniac'])) {
 	$night = (int)$_GET['aInsomniac'] - 1;
 	if($night == 0 || $night == 1)
 		$_SESSION['message'] = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/setInsomniac?insomniac=".$night."&".$ojnAPI->getToken());
@@ -50,7 +58,7 @@ else if(!empty($_GET['aInsomniac'])) {
 		$_SESSION['message'] = "Error: Error in choice";
 	header("Location: bunny.php");
 }
-else if(!empty($_GET['aVAPI'])) {
+elseif(!empty($_GET['aVAPI'])) {
 	$st = (string)$_GET['aVAPI'];
 	if($st == "enable" || $st == "disable")
 		$_SESSION['message'] = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/".$st."VAPI?".$ojnAPI->getToken());
@@ -88,6 +96,7 @@ elseif(!empty($_POST) && count($_POST) == 4) {
 
 if(empty($_SESSION['bunny'])) {
 ?>
+<div id="pageBunny" class="choices">
 <h1>Choix du lapin &agrave; configurer</h1>
 <ul>
 <?php
@@ -95,94 +104,30 @@ if(empty($_SESSION['bunny'])) {
     if(!empty($bunnies))
 	foreach($bunnies as $bunny => $nom)	{
 ?>
-	<li><?php echo $nom; ?> (<?php echo $bunny; ?>) <a href="bunny.php?b=<?php echo $bunny; ?>">>></a></li>
+	<li><b><?php echo $nom; ?></b> (<?php echo $bunny; ?>) <a href="bunny.php?b=<?php echo $bunny; ?>" class="button">Choisir ce lapin</a></li>
 <?php
 	}
 ?>
 </ul>
 <?php
-} else {
-$Token = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/getVAPIToken?".$ojnAPI->getToken());
-$Token = isset($Token['value']) ? $Token['value'] : '';
-/* Status */
-$Status = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/getVAPIStatus?".$ojnAPI->getToken());
-$Status= (!empty($Status['value']) && $Status['value'] == 'enabled') ? true : false;
-/* Public */
-$Public = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/getPublicVAPI?".$ojnAPI->getToken());
-$Public= (!empty($Public['value']) && $Public['value'] == "public") ? true : false;
-/* Night */
-$Insomniac = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/getInsomniac?".$ojnAPI->getToken());
-$Insomniac = (!empty($Insomniac['value']) && $Insomniac['value'] == "insomniac") ? true : false;
+}
+else {
+	$Token = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/getVAPIToken?".$ojnAPI->getToken());
+	$Token = isset($Token['value']) ? $Token['value'] : '';
+	/* Status */
+	$Status = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/getVAPIStatus?".$ojnAPI->getToken());
+	$Status= (!empty($Status['value']) && $Status['value'] == 'enabled') ? true : false;
+	/* Public */
+	$Public = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/getPublicVAPI?".$ojnAPI->getToken());
+	$Public= (!empty($Public['value']) && $Public['value'] == "public") ? true : false;
+	/* Night */
+	$Insomniac = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/getInsomniac?".$ojnAPI->getToken());
+	$Insomniac = (!empty($Insomniac['value']) && $Insomniac['value'] == "insomniac") ? true : false;
+?>
 
-?>
+<div id="pageBunny">
 <h1 id="bunny">Configuration du lapin '<?php echo !empty($_SESSION['bunny_name']) ? $_SESSION['bunny_name'] : $_SESSION['bunny']; ?>'</h1>
-<h2>Le lapin</h2>
-<form method="get">
-<fieldset>
-<legend>Configuration</legend>
-<?php
-$plugins = $ojnAPI->getListOfPlugins(false);
-$bunnyPlugins = $ojnAPI->getListOfBunnyEnabledPlugins(false);
-$actifs = $ojnAPI->bunnyListOfPlugins($_SESSION['bunny'],false);
-$clicks = $ojnAPI->getApiList("bunny/".$_SESSION['bunny']."/getClickPlugins?".$ojnAPI->getToken());
-?>
-Nom : <input type="text" name="bunny_name" value="<?php echo $_SESSION['bunny_name']; ?>"><input type="submit" value="Enregistrer">
-</form><br /><br />
-<form method="get">
-Plugin simple click : <select name="single">
-<option value="none">Aucun</option>
-<?php foreach($actifs as $plugin) { ?>
-<option value="<?php echo $plugin; ?>" <?php echo ($plugin == $clicks[0] ? ' selected="selected"' : '') ?>><?php echo $plugins[$plugin]; ?></option>
-<?php } ?>
-</select><br />
-Plugin double click : <select name="double">
-<option value="none">Aucun</option>
-<?php foreach($actifs as $plugin) { ?>
-<option value="<?php echo $plugin; ?>" <?php echo ($plugin == $clicks[1] ? ' selected="selected"' : '') ?>><?php echo $plugins[$plugin]; ?></option>
-<?php } ?>
-</select><br />
-<input type="submit" value="Enregistrer">
-</form><br />
-<form method="get">
-La nuit : <input type="radio" name="aInsomniac" value="1" <?php echo !$Insomniac ? 'checked="checked"' : ''; ?>/> Gros dormeur
-<input type="radio" name="aInsomniac" value="2" <?php echo $Insomniac ? 'checked="checked"' : ''; ?> /> Insomniaque
-<input type="submit" value="Enregister">
-</form>
-<br />
-VioletAPIToken: <?php echo $Token ; ?><br />
-<form method="get">
-VioletAPI: <input type="radio" name="aVAPI" value="enable" <?php echo $Status ? 'checked="checked"' : ''; ?>/> Activer
-<input type="radio" name="aVAPI" value="disable" <?php echo !$Status ? 'checked="checked"' : ''; ?> /> D&eacute;sactiver
-<input type="submit" value="Enregister">
-</form>
-<form method="get">
-Public: <input type="radio" name="pVAPI" value="2" <?php echo $Public ? 'checked="checked"' : ''; ?>/> Public
-<input type="radio" name="pVAPI" value="1" <?php echo !$Public ? 'checked="checked"' : ''; ?> /> Private
-<input type="submit" value="Enregister">
-</form>
-<form method="get">
-<input name="disconnect" type="submit" value="Deconnecter le lapin">
-</form>
-</fieldset>
-<?php if($Infos['isAdmin']): ?>
-<fieldset>
-<legend>Debug features</legend>
-<form method="get">
-<input name="resetpwd" type="submit" value="Remettre a zero le mot de passe">
-<input name="resetown" type="submit" value="Liberer le lapin de son maitre">
-</form>
-<?php
-$lasts = $ojnAPI->getApiMapped("bunny/".$_SESSION['bunny']."/getlasts?".$ojnAPI->getToken());
-?>
-<div><label>Last Jabber Connection : </label><?php echo $lasts['Last JabberConnection'] != "" ? date("d/m/Y H:i:s", strtotime($lasts['Last JabberConnection'])) : '' ?></div>
-<div><label>Last IP : </label><?php echo $lasts['LastIP'] ?></div>
-<div><label>Last Record : </label><?php echo $lasts['LastRecord'] ?></div>
-<div><label>Last Locate : </label><?php echo $lasts['LastLocate'] != "" ? date("d/m/Y H:i:s", strtotime($lasts['LastLocate'])) : '' ?></div>
-<div><label>Last Locate String : </label><?php echo $lasts['LastLocateString'] ?></div>
-<div><label>Last Cron : </label><?php echo $lasts['LastCron'] ?></div>
-</fieldset>
-<?php endif; ?>
-<h2>Plugins</h2>
+
 <?php
 if(isset($_SESSION['message']) && empty($_GET)) {
 	if(isset($_SESSION['message']['ok'])) { ?>
@@ -197,45 +142,138 @@ if(isset($_SESSION['message']) && empty($_GET)) {
 	echo "</div>";
 }
 ?>
-<center>
-<table style="width: 80%">
-	<tr>
-		<th>Plugin</th>
-		<th colspan="2">Actions</th>
-	</tr>
+
+<h2>Le lapin</h2>
+<fieldset>
+	<legend>Nom du Lapin</legend>
+	<form method="get">
 <?php
-	$i = 0;
-	foreach($bunnyPlugins as $plugin){
+$plugins = $ojnAPI->getListOfPlugins(false);
+$bunnyPlugins = $ojnAPI->getListOfBunnyEnabledPlugins(false);
+$actifs = $ojnAPI->bunnyListOfPlugins($_SESSION['bunny'],false);
+$clicks = $ojnAPI->getApiList("bunny/".$_SESSION['bunny']."/getClickPlugins?".$ojnAPI->getToken());
 ?>
-	<tr<?php echo $i++ % 2 ? " class='l2'" : "" ?>>
-		<td><?php echo $plugins[$plugin]; ?></td>
-		<td <?php echo in_array($plugin, $actifs) ? 'width="20%"' : 'colspan="2"'; ?>><a href='bunny.php?stat=<?php echo in_array($plugin, $actifs) ? "unregister" : "register"; ?>&plug=<?php echo $plugin; ?>'><?php echo in_array($plugin, $actifs) ? "D&eacute;sa" : "A"; ?>ctiver le plugin</a></td>
-		<?php if(in_array($plugin, $actifs)): ?><td width="20%"><?php echo in_array($plugin, $actifs)?"<a href='bunny_plugin.php?p=$plugin'>Configurer / Utiliser</a>":""?></td><?php endif; ?>
-	</tr>
+	<span class="fieldName">Nom</span><input type="text" name="bunny_name" value="<?php echo $_SESSION['bunny_name']; ?>"><input type="submit" value="Enregistrer">
+	</form>
+</fieldset>
+
+
+<fieldset>
+	<legend>Actions</legend>
+	<form method="get">
+		<span class="fieldName">Plugin simple click</span>
+		<select name="single">
+			<option value="none">Aucun</option>
+<?php foreach($actifs as $plugin) { ?>
+			<option value="<?php echo $plugin; ?>" <?php echo ($plugin == $clicks[0] ? ' selected="selected"' : '') ?>><?php echo $plugins[$plugin]; ?></option>
 <?php } ?>
-</table>
-</center>
+		</select><br />
+
+		<span class="fieldName">Plugin double click</span>
+		<select name="double">
+			<option value="none">Aucun</option>
+<?php foreach($actifs as $plugin) { ?>
+			<option value="<?php echo $plugin; ?>" <?php echo ($plugin == $clicks[1] ? ' selected="selected"' : '') ?>><?php echo $plugins[$plugin]; ?></option>
+<?php } ?>
+		</select> 
+		<input type="submit" value="Enregistrer">
+	</form>
+	<form method="get">
+		La nuit : <input type="radio" name="aInsomniac" value="1" <?php echo !$Insomniac ? 'checked="checked"' : ''; ?>/> Gros dormeur
+		<input type="radio" name="aInsomniac" value="2" <?php echo $Insomniac ? 'checked="checked"' : ''; ?> /> Insomniaque
+		<input type="submit" value="Enregister">
+	</form>
+</fieldset>
+
+<fieldset>
+	<legend>Violet API</legend>
+	<span class="fieldName">Violet API Token :</span><b><?php echo $Token ; ?></b><br />
+
+	<hr />
+	<form method="get">
+		<span class="fieldName">VioletAPI</span><input type="radio" name="aVAPI" value="enable" <?php echo $Status ? 'checked="checked"' : ''; ?>/> Activer
+		<input type="radio" name="aVAPI" value="disable" <?php echo !$Status ? 'checked="checked"' : ''; ?> /> D&eacute;sactiver
+		<input type="submit" value="Enregister">
+	</form>
+
+	<hr />
+	<form method="get">
+		<span class="fieldName">Public</span><input type="radio" name="pVAPI" value="2" <?php echo $Public ? 'checked="checked"' : ''; ?>/> Public
+		<input type="radio" name="pVAPI" value="1" <?php echo !$Public ? 'checked="checked"' : ''; ?> /> Private
+		<input type="submit" value="Enregister">
+	</form>
+
+	<hr />
+	<form method="get">
+		<input name="disconnect" type="submit" value="Deconnecter le lapin">
+	</form>
+</fieldset>
+
+
+<?php if($Infos['isAdmin']): ?>
+<fieldset>
+	<legend>Debug features</legend>
+<?php
+$lasts = $ojnAPI->getApiMapped("bunny/".$_SESSION['bunny']."/getlasts?".$ojnAPI->getToken());
+?>
+	<div class="apiStats"><label>Last Jabber Connection : </label><?php echo $lasts['Last JabberConnection'] != "" ? date("d/m/Y H:i:s", strtotime($lasts['Last JabberConnection'])) : '' ?></div>
+	<div class="apiStats"><label>Last IP : </label><?php echo $lasts['LastIP'] ?></div>
+	<div class="apiStats"><label>Last Record : </label><?php echo $lasts['LastRecord'] ?></div>
+	<div class="apiStats"><label>Last Locate : </label><?php echo $lasts['LastLocate'] != "" ? date("d/m/Y H:i:s", strtotime($lasts['LastLocate'])) : '' ?></div>
+	<div class="apiStats"><label>Last Locate String : </label><?php echo $lasts['LastLocateString'] ?></div>
+
+	<hr />
+	<form method="get">
+		<input name="resetpwd" type="submit" value="Remettre a zero le mot de passe">
+		<input name="resetown" type="submit" value="Liberer le lapin de son maitre">
+	</form>
+</fieldset>
+<?php endif; ?>
+
+<h2>Plugins</h2>
+
+	<table class="tablePlugins" cellspacing=0>
+		<tr>
+			<th>Plugin</th>
+			<th colspan="2">Actions</th>
+		</tr>
+	<?php
+		$i = 0;
+		foreach($bunnyPlugins as $plugin){
+	?>
+		<tr<?php echo $i++ % 2 ? " class='l2'" : "" ?>>
+			<td><?php echo $plugins[$plugin]; ?></td>
+			<td <?php echo in_array($plugin, $actifs) ? 'width="20%" class="remove"' : 'colspan="2" class="add"'; ?>><a href='bunny.php?stat=<?php echo in_array($plugin, $actifs) ? "unregister" : "register"; ?>&plug=<?php echo $plugin; ?>'><?php echo in_array($plugin, $actifs) ? "D&eacute;sa" : "A"; ?>ctiver</a></td>
+			<?php if(in_array($plugin, $actifs)): ?><td width="20%" class='config'><?php echo in_array($plugin, $actifs)?"<a href='bunny_plugin.php?p=$plugin'>Configurer / Utiliser</a>":""?></td><?php endif; ?>
+		</tr>
+	<?php } ?>
+	</table>
+
 <h2>Server</h2>
 <fieldset>
-<legend style="color: red">Use at your own risk, bunny may loose connection if parameters are bad</legend>
-<form method="post">
-<?php
-$pingserver = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/locate/getcustomlocate?param=PingServer&".$ojnAPI->getToken());
-$pingserver = $pingserver['value'];
-$broadserver = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/locate/getcustomlocate?param=BroadServer&".$ojnAPI->getToken());
-$broadserver = $broadserver['value'];
-$xmppserver = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/locate/getcustomlocate?param=XmppServer&".$ojnAPI->getToken());
-$xmppserver = $xmppserver['value'];
-$xmppport = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/locate/getcustomlocate?param=ListeningXmppPort&".$ojnAPI->getToken());
-$xmppport = $xmppport['value'];
-?>
-Ping Server : <input type="text" name="pingserver" value="<?php echo $pingserver ?>"><br />
-Broad Server : <input type="text" name="broadserver" value="<?php echo $broadserver ?>"><br />
-Xmpp Server : <input type="text" name="xmppserver" value="<?php echo $xmppserver ?>"><br />
-Xmpp Port : <input type="text" name="xmppport" value="<?php echo $xmppport ?>"><br />
-<input type="submit" value="Apply">
-</form>
+	<legend>Server Config</legend>
+	<em>Use at your own risk! Bunny might loose connection if these parameters are not valid!</em>
+	<form method="post">
+		<?php
+		$pingserver = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/locate/getcustomlocate?param=PingServer&".$ojnAPI->getToken());
+		$pingserver = $pingserver['value'];
+		$broadserver = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/locate/getcustomlocate?param=BroadServer&".$ojnAPI->getToken());
+		$broadserver = $broadserver['value'];
+		$xmppserver = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/locate/getcustomlocate?param=XmppServer&".$ojnAPI->getToken());
+		$xmppserver = $xmppserver['value'];
+		$xmppport = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/locate/getcustomlocate?param=ListeningXmppPort&".$ojnAPI->getToken());
+		$xmppport = $xmppport['value'];
+		?>
+		<span class="fieldName">Ping Server :</span><input type="text" name="pingserver" size="60" value="<?php echo $pingserver ?>"><br />
+		<span class="fieldName">Broad Server :</span><input type="text" name="broadserver" size="60" value="<?php echo $broadserver ?>"><br />
+		<span class="fieldName">Xmpp Server :</span><input type="text" name="xmppserver" size="60" value="<?php echo $xmppserver ?>"><br />
+		<span class="fieldName">Xmpp Port :</span><input type="text" name="xmppport" size="6" value="<?php echo $xmppport ?>"> 
+		<input type="submit" value="Apply">
+	</form>
 <?php
 }
+?>
+</div>
+<?php
 require_once "include/append.php";
 ?>
