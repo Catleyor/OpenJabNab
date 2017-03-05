@@ -1,11 +1,9 @@
-<?php
+<?php 
 if(!empty($_POST['a'])) {
 	if($_POST['a']=="sleep")
 		$retour = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/sleep/sleep?".$ojnAPI->getToken());
 	elseif($_POST['a']=="wakeup")
 		$retour = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/sleep/wakeup?".$ojnAPI->getToken());
-	elseif($_POST['a']=="rfid")
-		$retour = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/sleep/setRFID?tag=".$_POST['Tag']."&".$ojnAPI->getToken());
 	elseif($_POST['a']=="setup") {
 		for($i=0;$i<7;$i++)
 			if(empty($_POST['w'.$i]) || empty($_POST['s'.$i])) $i=0xF;
@@ -28,7 +26,6 @@ if(!empty($_POST['a'])) {
 $wakeup = "";
 $sleep = "";
 $lists = $ojnAPI->getApiList("bunny/".$_SESSION['bunny']."/sleep/getsetup?".$ojnAPI->getToken());
-$Ztamps = $Ztamps = $ojnAPI->GetListofZtamps(false);
 if(count($lists) == 14) {
 	foreach($lists as $i=>$v)
 		$lists[$i] = substr($v,0,-3);
@@ -37,8 +34,6 @@ if(count($lists) == 14) {
 		$lists[$i] = '10:00';
 		$lists[$i+7] = '18:00';
 	}
-$Tag = $ojnAPI->getApiString("bunny/".$_SESSION['bunny']."/sleep/getRFID?".$ojnAPI->getToken());
-$Tag = isset($Tag['value']) ? $Tag['value'] : '';
 ?>
 <form method="post">
 <fieldset>
@@ -52,7 +47,7 @@ $Tag = isset($Tag['value']) ? $Tag['value'] : '';
 	<option value="<?php echo $k; ?>" <?php echo $Tag == $k ? "selected=\"selected\"" : ""; ?>><?php echo $v; ?> (<?php echo $k; ?>)</option>
 	<?php endforeach; ?>
 </select><br />
-<input type="radio" name="a" value="setup" /> Configuration<br />
+<input type="radio" name="a" value="setup" checked="checked" /> Configuration<br />
 <table>
 <tr>
 	<th>Jour</th>
